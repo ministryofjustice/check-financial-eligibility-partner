@@ -1,16 +1,44 @@
 module Collators
-  class GrossIncomeCollator < BaseWorkflowService
+  class GrossIncomeCollator
     include Transactions
 
-    def call
-      if assessment.employments.any?
-        assessment.employments.each { |employment| Utilities::EmploymentIncomeMonthlyEquivalentCalculator.call(employment) }
-        Calculators::EmploymentIncomeCalculator.call(assessment)
+    class << self
+      def call(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:)
+        new(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:).call
       end
-      gross_income_summary.update!(populate_attrs)
+    end
+
+    def initialize(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:)
+      @assessment = assessment
+      @submission_date = submission_date
+      @employments = employments
+      @disposable_income_summary = disposable_income_summary
+      @gross_income_summary = gross_income_summary
+    end
+
+    def call
+      if @employments.any?
+        @employments.each { |employment| Utilities::EmploymentIncomeMonthlyEquivalentCalculator.call(employment) }
+        if @employments.count > 1
+          # only pass assessment here so that remarks about multiple employments can be added
+          Calculators::MultipleEmploymentsCalculator.call(assessment: @assessment,
+                                                          employments: @employments,
+                                                          disposable_income_summary: @disposable_income_summary,
+                                                          gross_income_summary: @gross_income_summary)
+        else
+          Calculators::EmploymentIncomeCalculator.call(submission_date: @submission_date,
+                                                       employment: @employments.first,
+                                                       disposable_income_summary: @disposable_income_summary,
+                                                       gross_income_summary: @gross_income_summary)
+        end
+      end
+      @gross_income_summary.update!(populate_attrs)
     end
 
   private
+
+    # for Transactions mixin
+    attr_reader :gross_income_summary
 
     def income_categories
       CFEConstants::VALID_INCOME_CATEGORIES.map(&:to_sym)
@@ -23,8 +51,8 @@ module Collators
         populate_income_attrs(attrs, category)
       end
 
-      if assessment.employments.count < 2
-        attrs[:total_gross_income] += gross_income_summary[:gross_employment_income]
+      if @employments.count < 2
+        attrs[:total_gross_income] += @gross_income_summary[:gross_employment_income]
       end
 
       attrs
@@ -52,7 +80,7 @@ module Collators
     end
 
     def monthly_state_benefits
-      @monthly_state_benefits ||= Calculators::StateBenefitsCalculator.call(assessment)
+      @monthly_state_benefits ||= Calculators::StateBenefitsCalculator.call(@gross_income_summary.state_benefits)
     end
 
     def monthly_student_loan
@@ -62,7 +90,7 @@ module Collators
     def calculate_monthly_student_loan
       return 0.0 if categorised_income.key?(:student_loan)
 
-      gross_income_summary.student_loan_payments.sum(&:monthly_equivalent_amount)
+      @gross_income_summary.student_loan_payments.sum(&:monthly_equivalent_amount)
     end
 
     def monthly_unspecified_source
@@ -72,7 +100,7 @@ module Collators
     def calculate_monthly_unspecified_source
       return 0.0 if categorised_income.key?(:unspecified_source)
 
-      gross_income_summary.unspecified_source_payments.sum(&:monthly_equivalent_amount)
+      @gross_income_summary.unspecified_source_payments.sum(&:monthly_equivalent_amount)
     end
 
     def categorised_income
@@ -81,7 +109,7 @@ module Collators
 
     def categorise_income
       result = Hash.new(0.0)
-      gross_income_summary.other_income_sources.each do |source|
+      @gross_income_summary.other_income_sources.each do |source|
         monthly_income = BigDecimal(source.calculate_monthly_income!, Float::DIG)
         result[source.name.to_sym] = monthly_income
         result[:total] += monthly_income

@@ -61,7 +61,7 @@ module Assessors
     end
 
     def assessment_eligibility
-      @assessment_eligibility ||= assessment.eligibilities.find_by(proceeding_type_code: @proceeding_type_code)
+      @assessment_eligibility ||= assessment.eligibilities.find_by!(proceeding_type_code: @proceeding_type_code)
     end
 
     def capital_eligibility
