@@ -49,7 +49,7 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.x.google_sheets.private_key_id = ENV["PRIVATE_KEY_ID"]
-  config.x.google_sheets.private_key =  ENV["PRIVATE_KEY"].gsub('\\n', "\n")
+  config.x.google_sheets.private_key =  ENV["PRIVATE_KEY"]&.gsub('\\n', "\n")
   config.x.google_sheets.client_email = ENV["CLIENT_EMAIL"]
   config.x.google_sheets.client_id = ENV["CLIENT_ID"]
 end
