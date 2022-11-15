@@ -36,21 +36,20 @@ module Creators
     end
 
     def create_employment
-      employment_attributes[:employment_income].each do |employment|
-        employment_collection.create!(employment.slice(:name, :client_id))
-        create_payments(employment)
+      employment_attributes[:employment_income].each do |attributes|
+        employment = employment_collection.create!(attributes.slice(:name, :client_id))
+        create_payments(employment, attributes)
       end
     end
 
-    def create_payments(employment)
-      employment[:payments].each do |income|
-        emp = employment_collection.find_by(name: employment[:name])
-        emp.employment_payments.create!(client_id: income[:client_id],
-                                        date: income[:date],
-                                        gross_income: income[:gross],
-                                        benefits_in_kind: income[:benefits_in_kind],
-                                        tax: income[:tax],
-                                        national_insurance: income[:national_insurance])
+    def create_payments(employment, attributes)
+      attributes[:payments].each do |income|
+        employment.employment_payments.create!(client_id: income[:client_id],
+                                               date: income[:date],
+                                               gross_income: income[:gross],
+                                               benefits_in_kind: income[:benefits_in_kind],
+                                               tax: income[:tax],
+                                               national_insurance: income[:national_insurance])
       end
     end
 
