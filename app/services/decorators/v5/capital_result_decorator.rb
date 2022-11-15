@@ -1,8 +1,8 @@
 module Decorators
   module V5
     class CapitalResultDecorator
-      def initialize(assessment)
-        @assessment = assessment
+      def initialize(summary)
+        @summary = summary
       end
 
       def as_json
@@ -23,9 +23,7 @@ module Decorators
 
     private
 
-      def summary
-        @summary ||= @assessment.capital_summary
-      end
+      attr_reader :summary
     end
   end
 end

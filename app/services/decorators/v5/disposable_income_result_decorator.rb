@@ -1,8 +1,9 @@
 module Decorators
   module V5
     class DisposableIncomeResultDecorator
-      def initialize(assessment)
-        @assessment = assessment
+      def initialize(summary, gross_income_summary)
+        @summary = summary
+        @gross_income_summary = gross_income_summary
       end
 
       def as_json
@@ -22,13 +23,7 @@ module Decorators
 
     private
 
-      def summary
-        @summary ||= @assessment.disposable_income_summary
-      end
-
-      def gross_income_summary
-        @gross_income_summary ||= @assessment.gross_income_summary
-      end
+      attr_reader :summary, :gross_income_summary
 
       def net_employment_income
         gross_income_summary.gross_employment_income + summary.employment_income_deductions + summary.fixed_employment_allowance
