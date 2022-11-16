@@ -1,4 +1,4 @@
 class Partner < ApplicationRecord
   belongs_to :assessment, optional: true
-  validates :date_of_birth, comparison: { less_than_or_equal_to: Date.current }
+  validates :date_of_birth, cfe_date: { not_in_the_future: true }
 end
