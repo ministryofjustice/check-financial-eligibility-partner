@@ -7,6 +7,14 @@ module Decorators
       end
 
       def as_json
+        if summary.is_a?(ApplicantDisposableIncomeSummary)
+          basic_attributes.merge(proceeding_types:)
+        else
+          basic_attributes
+        end
+      end
+
+      def basic_attributes
         {
           dependant_allowance: summary.dependant_allowance.to_f,
           gross_housing_costs: summary.gross_housing_costs.to_f,
@@ -17,7 +25,6 @@ module Decorators
           total_disposable_income: summary.total_disposable_income.to_f,
           employment_income:,
           income_contribution: summary.income_contribution.to_f,
-          proceeding_types: ProceedingTypesResultDecorator.new(summary).as_json,
         }
       end
 
@@ -38,6 +45,10 @@ module Decorators
           fixed_employment_deduction: summary.fixed_employment_allowance.to_f,
           net_employment_income: net_employment_income.to_f,
         }
+      end
+
+      def proceeding_types
+        ProceedingTypesResultDecorator.new(summary).as_json
       end
     end
   end

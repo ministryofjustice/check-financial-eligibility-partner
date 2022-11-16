@@ -6,15 +6,13 @@ module Decorators
       end
 
       def as_json
-        proceeding_types.order(:ccms_code).map { |proceeding_type| pt_result(proceeding_type) }.compact
+        proceeding_types.order(:ccms_code).map { |proceeding_type| pt_result(proceeding_type) }
       end
 
     private
 
       def pt_result(proceeding_type)
         elig = @assessment_or_summary.eligibilities.find_by(proceeding_type_code: proceeding_type.ccms_code)
-        return unless elig
-
         {
           ccms_code: proceeding_type.ccms_code,
           client_involvement_type: proceeding_type.client_involvement_type,

@@ -6,15 +6,26 @@ module Decorators
       end
 
       def as_json
+        if @summary.is_a?(ApplicantGrossIncomeSummary)
+          basic_attributes.merge(proceeding_types:)
+        else
+          basic_attributes
+        end
+      end
+
+      def basic_attributes
         {
           total_gross_income: summary.total_gross_income.to_f,
-          proceeding_types: ProceedingTypesResultDecorator.new(summary).as_json,
         }
       end
 
     private
 
       attr_reader :summary
+
+      def proceeding_types
+        ProceedingTypesResultDecorator.new(summary).as_json
+      end
     end
   end
 end
