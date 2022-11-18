@@ -3,9 +3,8 @@ module Decorators
     class GrossIncomeDecorator
       include Transactions
 
-      def initialize(summary, employments)
-        @summary = summary
-        @employments = employments
+      def initialize(assessment)
+        @assessment = assessment
         @categories = income_categories_excluding_benefits
       end
 
@@ -20,14 +19,16 @@ module Decorators
 
     private
 
-      attr_reader :summary
-
       def income_categories_excluding_benefits
         CFEConstants::VALID_INCOME_CATEGORIES.map(&:to_sym) - [:benefits]
       end
 
+      def summary
+        @summary ||= @assessment.gross_income_summary
+      end
+
       def employment_incomes
-        @employments.order(:name).map { |employment| employment_income(employment) }
+        @assessment.employments.order(:name).map { |employment| employment_income(employment) }
       end
 
       def employment_income(employment)

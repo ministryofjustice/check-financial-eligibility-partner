@@ -3,8 +3,9 @@ module Decorators
     class DisposableIncomeDecorator
       attr_reader :record, :categories
 
-      def initialize(summary)
-        @summary = summary
+      def initialize(assessment)
+        @assessment = assessment
+        @summary = assessment.disposable_income_summary
         @categories = CFEConstants::VALID_OUTGOING_CATEGORIES.map(&:to_sym)
       end
 

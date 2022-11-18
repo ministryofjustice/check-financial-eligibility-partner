@@ -1,19 +1,11 @@
 module Decorators
   module V5
     class CapitalResultDecorator
-      def initialize(summary)
-        @summary = summary
+      def initialize(assessment)
+        @assessment = assessment
       end
 
       def as_json
-        if @summary.is_a?(ApplicantCapitalSummary)
-          basic_attributes.merge(proceeding_types:)
-        else
-          basic_attributes
-        end
-      end
-
-      def basic_attributes
         {
           total_liquid: summary.total_liquid.to_f,
           total_non_liquid: summary.total_non_liquid.to_f,
@@ -25,15 +17,14 @@ module Decorators
           subject_matter_of_dispute_disregard: summary.subject_matter_of_dispute_disregard.to_f,
           capital_contribution: summary.capital_contribution.to_f,
           assessed_capital: summary.assessed_capital.to_f,
+          proceeding_types: ProceedingTypesResultDecorator.new(summary).as_json,
         }
       end
 
     private
 
-      attr_reader :summary
-
-      def proceeding_types
-        ProceedingTypesResultDecorator.new(summary).as_json
+      def summary
+        @summary ||= @assessment.capital_summary
       end
     end
   end
