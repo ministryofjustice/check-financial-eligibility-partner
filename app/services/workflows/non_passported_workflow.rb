@@ -80,9 +80,11 @@ module Workflows
                                                  disposable_income_summary: assessment.partner_disposable_income_summary)
 
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.disposable_income_summary)
+                                                 disposable_income_summary: assessment.disposable_income_summary,
+                                                 person: applicant_partner)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.partner_gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.partner_disposable_income_summary)
+                                                 disposable_income_summary: assessment.partner_disposable_income_summary,
+                                                 person: applicant_partner)
 
         Assessors::DisposableIncomeAssessor.call(
           disposable_income_summary: assessment.disposable_income_summary,
@@ -101,7 +103,8 @@ module Workflows
         Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.disposable_income_summary)
+                                                 disposable_income_summary: assessment.disposable_income_summary,
+                                                 person: applicant)
         Assessors::DisposableIncomeAssessor.call(disposable_income_summary: assessment.disposable_income_summary,
                                                  total_disposable_income: assessment.disposable_income_summary.total_disposable_income)
       end
