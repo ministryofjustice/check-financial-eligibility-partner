@@ -326,11 +326,6 @@ workflows:
             - check_swagger
 #            - unit_tests
             - build_and_push
-      - deploy_production:
-          context: check-financial-eligibility-partner-production
-          requires:
-            - build_and_push
-#          <<: *generic-slack-fail-post-step
       - delete_dependabot_deployment:
           context: check-financial-eligibility-partner-uat
           filters:
@@ -373,10 +368,18 @@ workflows:
           context: check-financial-eligibility-partner-staging
           requires:
             - build_and_push
+          filters:
+            branches:
+              only:
+                - main
       - deploy_production:
           context: check-financial-eligibility-partner-production
           requires:
             - build_and_push
+          filters:
+            branches:
+              only:
+                - main
 #          <<: *generic-slack-fail-post-step
 
   nightly:
