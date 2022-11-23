@@ -15,13 +15,14 @@ RSpec.describe Collators::RegularOutgoingsCollator do
   let(:gross_income_summary) { assessment.gross_income_summary }
   let(:disposable_income_summary) { assessment.disposable_income_summary }
   let(:person) do
-    OpenStruct.new(employed?: assessment.applicant&.employed?,
+    OpenStruct.new(employed?: assessment.applicant.employed?,
                    dependants: assessment.dependants,
                    has_student_loan?: assessment.gross_income_summary.student_loan_payments.any?)
   end
+  let(:submission_date) { assessment.submission_date }
 
   describe ".call" do
-    subject(:collator) { described_class.call(gross_income_summary:, disposable_income_summary:, person:) }
+    subject(:collator) { described_class.call(gross_income_summary:, disposable_income_summary:, person:, submission_date:) }
 
     context "without monthly regular transactions" do
       it "does increments #<cagtegory>_all_sources data" do

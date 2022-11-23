@@ -81,10 +81,12 @@ module Workflows
 
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
-                                                 person: applicant_partner)
+                                                 person: applicant_partner,
+                                                 submission_date: assessment.submission_date)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.partner_gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.partner_disposable_income_summary,
-                                                 person: applicant_partner)
+                                                 person: applicant_partner,
+                                                 submission_date: assessment.submission_date)
 
         Assessors::DisposableIncomeAssessor.call(
           disposable_income_summary: assessment.disposable_income_summary,
@@ -104,7 +106,8 @@ module Workflows
                                                  disposable_income_summary: assessment.disposable_income_summary)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
-                                                 person: applicant)
+                                                 person: applicant,
+                                                 submission_date: assessment.submission_date)
         Assessors::DisposableIncomeAssessor.call(disposable_income_summary: assessment.disposable_income_summary,
                                                  total_disposable_income: assessment.disposable_income_summary.total_disposable_income)
       end
