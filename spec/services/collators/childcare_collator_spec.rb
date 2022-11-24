@@ -14,7 +14,8 @@ module Collators
                                                     has_student_loan?: assessment.gross_income_summary.student_loan_payments.any?,
                                                     dependants: assessment.dependants),
                              gross_income_summary: assessment.gross_income_summary,
-                             disposable_income_summary: assessment.disposable_income_summary)
+                             disposable_income_summary: assessment.disposable_income_summary,
+                             all_dependants: assessment.dependants)
       end
 
       before do

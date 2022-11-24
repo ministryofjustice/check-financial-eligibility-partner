@@ -20,9 +20,12 @@ RSpec.describe Collators::RegularOutgoingsCollator do
                    has_student_loan?: assessment.gross_income_summary.student_loan_payments.any?)
   end
   let(:submission_date) { assessment.submission_date }
+  let(:all_dependants) { assessment.dependants }
 
   describe ".call" do
-    subject(:collator) { described_class.call(gross_income_summary:, disposable_income_summary:, person:, submission_date:) }
+    subject(:collator) do
+      described_class.call(gross_income_summary:, disposable_income_summary:, person:, submission_date:, all_dependants:)
+    end
 
     context "without monthly regular transactions" do
       it "does increments #<cagtegory>_all_sources data" do

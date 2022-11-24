@@ -85,6 +85,10 @@ module Calculators
     end
 
     def should_exclude_housing_benefit?
+      # TODO: Track down why this dependants check is being made here
+      # and, based on that, potentially expand it to include all dependants
+      # associated with the assessment, not just the person's direct dependants.
+      # c.f. https://mojdt.slack.com/archives/CDY1X378Q/p1669197370105989
       person_has_dependants? && receiving_housing_benefits?
     end
 

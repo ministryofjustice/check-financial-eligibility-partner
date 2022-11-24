@@ -1,12 +1,15 @@
 module Calculators
   class DependantAllowanceCalculator
-    def self.call(dependant)
-      new(dependant).call
+    def self.call(dependant, submission_date)
+      new(dependant, submission_date).call
     end
 
-    def initialize(dependant)
+    def initialize(dependant, submission_date)
       @dependant = dependant
+      @submission_date = submission_date
     end
+
+    attr_reader :submission_date
 
     def call
       return child_under_15_allowance if under_15_years_old?
@@ -46,14 +49,6 @@ module Calculators
 
     def under_18_in_full_time_education?
       @dependant.date_of_birth > (submission_date - 18.years) && @dependant.in_full_time_education?
-    end
-
-    def submission_date
-      @submission_date ||= assessment.submission_date
-    end
-
-    def assessment
-      @assessment ||= @dependant.assessment
     end
 
     def capital_over_allowance?

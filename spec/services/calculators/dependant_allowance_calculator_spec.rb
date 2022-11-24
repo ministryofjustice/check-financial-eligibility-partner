@@ -3,7 +3,7 @@ require "rails_helper"
 module Calculators
   RSpec.describe DependantAllowanceCalculator do
     describe "#call" do
-      subject(:calculator) { described_class.new(dependant).call }
+      subject(:calculator) { described_class.new(dependant, Date.current).call }
 
       before do
         allow_any_instance_of(described_class).to receive(:child_under_15_allowance).and_return 111.11
@@ -145,7 +145,7 @@ module Calculators
     describe "retrieving threshold values for 2021" do
       let(:dependant) { create :dependant }
 
-      subject(:calculator) { described_class.new(dependant) }
+      subject(:calculator) { described_class.new(dependant, dependant.assessment.submission_date) }
 
       context "before new allowances date" do
         before do
@@ -212,7 +212,7 @@ module Calculators
     describe "retrieving threshold values for 2022" do
       let(:dependant) { create :dependant }
 
-      subject(:calculator) { described_class.new(dependant) }
+      subject(:calculator) { described_class.new(dependant, dependant.assessment.submission_date) }
 
       context "before new allowances date" do
         before do

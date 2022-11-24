@@ -60,20 +60,18 @@ module Workflows
         applicant = PersonWrapper.new person: assessment.applicant, is_single: false,
                                       dependants: assessment.dependants, gross_income_summary: assessment.gross_income_summary
         partner = PersonWrapper.new person: assessment.partner, is_single: false,
-                                    dependants: [], gross_income_summary: assessment.partner_gross_income_summary
-
-        # collate outgoings of partner and applicant seperately,
-        # but rules treat them as a single entity
-        applicant_partner = ApplicantOrPartnerWrapper.new applicant, partner
-
+                                    dependants: assessment.partner_dependants, gross_income_summary: assessment.partner_gross_income_summary
+        all_dependants = Dependant.where(assessment:)
         Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
-                                          person: applicant_partner,
+                                          person: applicant,
                                           gross_income_summary: assessment.gross_income_summary.freeze,
-                                          disposable_income_summary: assessment.disposable_income_summary)
+                                          disposable_income_summary: assessment.disposable_income_summary,
+                                          all_dependants:)
         Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
-                                          person: applicant_partner,
+                                          person: partner,
                                           gross_income_summary: assessment.partner_gross_income_summary.freeze,
-                                          disposable_income_summary: assessment.partner_disposable_income_summary)
+                                          disposable_income_summary: assessment.partner_disposable_income_summary,
+                                          all_dependants:)
 
         Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary)
@@ -82,12 +80,14 @@ module Workflows
 
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
-                                                 person: applicant_partner,
-                                                 submission_date: assessment.submission_date)
+                                                 person: applicant,
+                                                 submission_date: assessment.submission_date,
+                                                 all_dependants:)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.partner_gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.partner_disposable_income_summary,
-                                                 person: applicant_partner,
-                                                 submission_date: assessment.submission_date)
+                                                 person: partner,
+                                                 submission_date: assessment.submission_date,
+                                                 all_dependants:)
 
         assessment.disposable_income_summary.update!(
           combined_total_disposable_income: assessment.disposable_income_summary.total_disposable_income +
@@ -103,13 +103,15 @@ module Workflows
         Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
                                           person: applicant,
                                           gross_income_summary: assessment.gross_income_summary.freeze,
-                                          disposable_income_summary: assessment.disposable_income_summary)
+                                          disposable_income_summary: assessment.disposable_income_summary,
+                                          all_dependants: applicant.dependants)
         Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
                                                  person: applicant,
-                                                 submission_date: assessment.submission_date)
+                                                 submission_date: assessment.submission_date,
+                                                 all_dependants: applicant.dependants)
         assessment.disposable_income_summary.update!(combined_total_disposable_income: assessment.disposable_income_summary.total_disposable_income,
                                                      combined_total_outgoings_and_allowances: assessment.disposable_income_summary.total_outgoings_and_allowances)
       end

@@ -12,19 +12,20 @@
 module Collators
   class RegularOutgoingsCollator
     class << self
-      def call(disposable_income_summary:, gross_income_summary:, person:, submission_date:)
-        new(disposable_income_summary:, gross_income_summary:, person:, submission_date:).call
+      def call(disposable_income_summary:, gross_income_summary:, person:, submission_date:, all_dependants:)
+        new(disposable_income_summary:, gross_income_summary:, person:, submission_date:, all_dependants:).call
       end
     end
 
     include MonthlyEquivalentCalculatable
     include ChildcareEligibility
 
-    def initialize(disposable_income_summary:, gross_income_summary:, person:, submission_date:)
+    def initialize(disposable_income_summary:, gross_income_summary:, person:, submission_date:, all_dependants:)
       @disposable_income_summary = disposable_income_summary
       @gross_income_summary = gross_income_summary
       @person = person
       @submission_date = submission_date
+      @all_dependants = all_dependants
     end
 
     def call
@@ -41,7 +42,7 @@ module Collators
       attrs = initialize_attributes
 
       outgoing_categories.each do |category|
-        next if category == :child_care && !eligible_for_childcare_costs?(@person, @submission_date) # see *§ above
+        next if category == :child_care && !eligible_for_childcare_costs?(@person, @submission_date, @all_dependants) # see *§ above
 
         category_all_sources = "#{category}_all_sources".to_sym
         category_monthly_amount = monthly_regular_transaction_amount_by(gross_income_summary: @gross_income_summary, operation: :debit, category:)
