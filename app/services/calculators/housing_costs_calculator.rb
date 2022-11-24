@@ -17,10 +17,8 @@ module Calculators
                             [gross_housing_costs, gross_cost_minus_housing_benefit, single_monthly_housing_costs_cap].min.to_f
                           elsif should_halve_full_cost_minus_benefits?
                             (monthly_actual_housing_costs - monthly_housing_benefit) / 2
-                          elsif should_exclude_housing_benefit?
-                            gross_cost_minus_housing_benefit
                           else
-                            gross_housing_costs
+                            gross_cost_minus_housing_benefit
                           end
 
       [net_housing_costs, 0.0].max
@@ -85,11 +83,7 @@ module Calculators
     end
 
     def should_exclude_housing_benefit?
-      # TODO: Track down why this dependants check is being made here
-      # and, based on that, potentially expand it to include all dependants
-      # associated with the assessment, not just the person's direct dependants.
-      # c.f. https://mojdt.slack.com/archives/CDY1X378Q/p1669197370105989
-      person_has_dependants? && receiving_housing_benefits?
+      receiving_housing_benefits?
     end
 
     def receiving_housing_benefits?
@@ -110,11 +104,7 @@ module Calculators
     end
 
     def person_has_no_dependants?
-      !person_has_dependants?
-    end
-
-    def person_has_dependants?
-      @person.dependants.any?
+      @person.dependants.none?
     end
   end
 end
