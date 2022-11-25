@@ -9,8 +9,6 @@ module Calculators
       @submission_date = submission_date
     end
 
-    attr_reader :submission_date
-
     def call
       return child_under_15_allowance if under_15_years_old?
 
@@ -22,6 +20,10 @@ module Calculators
 
       positive_or_zero(adult_allowance - monthly_income)
     end
+
+  private
+
+    attr_reader :submission_date
 
     def positive_or_zero(value)
       [0, value].max

@@ -1,13 +1,11 @@
 module Collators
   class OutgoingsCollator
     class << self
-      def call(submission_date:, person:, gross_income_summary:, disposable_income_summary:, all_dependants:)
+      def call(submission_date:, person:, gross_income_summary:, disposable_income_summary:, eligible_for_childcare:)
         # sets child_care_bank and child_care_cash fields in disposable_income_summary
-        Collators::ChildcareCollator.call(submission_date:,
-                                          person:,
-                                          gross_income_summary:,
+        Collators::ChildcareCollator.call(gross_income_summary:,
                                           disposable_income_summary:,
-                                          all_dependants:)
+                                          eligible_for_childcare:)
         # sets dependant_allowance on each dependant,
         # and dependant_allowance on disposable_income_summary as the sum of them
         Collators::DependantsAllowanceCollator.call(dependants: person.dependants,

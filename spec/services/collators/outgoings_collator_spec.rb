@@ -9,7 +9,7 @@ module Collators
                            person: OpenStruct.new(employed?: assessment.applicant&.employed?, dependants: assessment.dependants),
                            gross_income_summary: assessment.gross_income_summary,
                            disposable_income_summary: assessment.disposable_income_summary,
-                           all_dependants: assessment.dependants)
+                           eligible_for_childcare: true)
     end
 
     describe ".call" do
