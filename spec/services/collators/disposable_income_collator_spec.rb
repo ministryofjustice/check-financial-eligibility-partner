@@ -11,9 +11,8 @@ module Collators
     let(:net_housing) { gross_housing - housing_benefit }
     let(:employment_income_deductions) { Faker::Number.decimal(l_digits: 3, r_digits: 2).to_d(Float::DIG) }
     let(:fixed_employment_allowance) { 45.0 }
-    let(:eligible_for_partner_allowance) { false }
-    let(:submission_date) { nil }
     let(:dependant_allowance) { 582.98 }
+    let(:partner_allowance) { 481.29 }
 
     let(:disposable_income_summary) do
       summary = create :disposable_income_summary,
@@ -43,7 +42,8 @@ module Collators
         net_housing +
         dependant_allowance -
         employment_income_deductions -
-        fixed_employment_allowance
+        fixed_employment_allowance +
+        partner_allowance
     end
 
     before { create :gross_income_summary, :with_all_records, assessment: }
@@ -52,8 +52,7 @@ module Collators
       subject(:collator) do
         described_class.call(gross_income_summary: assessment.gross_income_summary,
                              disposable_income_summary: assessment.disposable_income_summary,
-                             eligible_for_partner_allowance:,
-                             submission_date:)
+                             partner_allowance:)
       end
 
       context "total_monthly_outgoings" do
@@ -117,26 +116,6 @@ module Collators
           expect(disposable_income_summary.maintenance_out_all_sources).to eq maintenance_out_total
           expect(disposable_income_summary.rent_or_mortgage_all_sources).to eq rent_or_mortgage_total
           expect(disposable_income_summary.legal_aid_all_sources).to eq legal_aid_total
-        end
-      end
-
-      context "with partner allowance" do
-        let(:eligible_for_partner_allowance) { true }
-        let(:submission_date) { 1.week.ago }
-
-        before do
-          allow(Threshold).to receive(:value_for).with(:partner_allowance, at: submission_date).and_return(123.45)
-        end
-
-        it "adds partner allowance to outgoings" do
-          collator
-          expect(disposable_income_summary.reload.total_outgoings_and_allowances).to eq(total_outgoings + 123.45)
-        end
-
-        it "subtracts partner allowance from disposable income" do
-          collator
-          gross_income = assessment.gross_income_summary.total_gross_income + assessment.gross_income_summary.gross_employment_income
-          expect(disposable_income_summary.reload.total_disposable_income).to eq(gross_income - total_outgoings - 123.45)
         end
       end
     end

@@ -19,16 +19,15 @@ module Collators
              :gross_employment_income, to: :@gross_income_summary
 
     class << self
-      def call(disposable_income_summary:, gross_income_summary:, eligible_for_partner_allowance:, submission_date: nil)
-        new(gross_income_summary:, disposable_income_summary:, eligible_for_partner_allowance:, submission_date:).call
+      def call(disposable_income_summary:, gross_income_summary:, partner_allowance:)
+        new(gross_income_summary:, disposable_income_summary:, partner_allowance:).call
       end
     end
 
-    def initialize(disposable_income_summary:, gross_income_summary:, eligible_for_partner_allowance:, submission_date:)
+    def initialize(disposable_income_summary:, gross_income_summary:, partner_allowance:)
       @disposable_income_summary = disposable_income_summary
       @gross_income_summary = gross_income_summary
-      @eligible_for_partner_allowance = eligible_for_partner_allowance
-      @submission_date = submission_date
+      @partner_allowance = partner_allowance
       @monthly_cash_transactions_total = 0
     end
 
@@ -77,7 +76,7 @@ module Collators
         @monthly_cash_transactions_total -
         fixed_employment_allowance -
         employment_income_deductions +
-        partner_allowance
+        @partner_allowance
     end
 
     def monthly_bank_transactions_total
@@ -86,12 +85,6 @@ module Collators
 
     def disposable_income
       total_gross_income - total_outgoings_and_allowances
-    end
-
-    def partner_allowance
-      return 0 unless @eligible_for_partner_allowance
-
-      Threshold.value_for(:partner_allowance, at: @submission_date)
     end
   end
 end

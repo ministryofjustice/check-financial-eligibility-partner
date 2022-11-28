@@ -75,11 +75,10 @@ module Workflows
 
         Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
-                                                 eligible_for_partner_allowance: false)
+                                                 partner_allowance: 0)
         Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.partner_gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.partner_disposable_income_summary,
-                                                 eligible_for_partner_allowance: true,
-                                                 submission_date: assessment.submission_date)
+                                                 partner_allowance:)
 
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
@@ -105,7 +104,7 @@ module Workflows
                                           eligible_for_childcare:)
         Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
-                                                 eligible_for_partner_allowance: false)
+                                                 partner_allowance: 0)
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
                                                  eligible_for_childcare:)
@@ -127,6 +126,10 @@ module Workflows
         dependants: Dependant.where(assessment:), # Ensure we consider both client and partner dependants
         submission_date: assessment.submission_date,
       )
+    end
+
+    def partner_allowance
+      Threshold.value_for(:partner_allowance, at: assessment.submission_date)
     end
   end
 end
