@@ -1,7 +1,7 @@
 Feature:
     "I have a property that is disputed"
 
-    Scenario: A SMOD property below the threshold is disregarded.
+    Scenario: A SMOD property where the value of the client's share of its equity is entirely disregarded
         Given I am undertaking a standard assessment with an applicant who receives passporting benefits
         And I add the following main property details for the current assessment:
             | value                     | 150000 |
@@ -22,7 +22,7 @@ Feature:
             | subject_matter_of_dispute_disregard | 45500.0 |
             | assessed_capital                    | 0.0     |
 
-    Scenario: SMOD is capped if the threshold is exceeded.
+    Scenario: The SMOD disregard is capped if the property is assessed as being worth more than £100k.
         Given I am undertaking a standard assessment with an applicant who receives passporting benefits
         And I add the following main property details for the current assessment:
             | value                     | 250000 |
