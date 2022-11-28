@@ -27,12 +27,20 @@ module Collators
     end
 
     def call
+      perform_assessments
       RETURN_VALUES.deep_transform_values { |value| send(value) }
     end
 
   private
 
-    attr_reader :pensioner_capital_disregard
+    def perform_assessments
+      @liquid_capital = Assessors::LiquidCapitalAssessor.call(@capital_summary)
+      @non_liquid_capital = Assessors::NonLiquidCapitalAssessor.call(@capital_summary)
+      @property = Calculators::PropertyCalculator.call(submission_date: @submission_date, capital_summary: @capital_summary)
+      @vehicles = Assessors::VehicleAssessor.call(@capital_summary.vehicles)
+    end
+
+    attr_reader :pensioner_capital_disregard, :liquid_capital, :non_liquid_capital, :property, :vehicles
 
     def assessed_capital
       total_capital - pensioner_capital_disregard - subject_matter_of_dispute_disregard
@@ -45,23 +53,6 @@ module Collators
 
     def total_capital
       @total_capital ||= liquid_capital + non_liquid_capital + vehicles + property
-    end
-
-    def liquid_capital
-      @liquid_capital ||= Assessors::LiquidCapitalAssessor.call(@capital_summary)
-    end
-
-    def non_liquid_capital
-      @non_liquid_capital ||= Assessors::NonLiquidCapitalAssessor.call(@capital_summary)
-    end
-
-    def property
-      @property ||= Calculators::PropertyCalculator.call(submission_date: @submission_date,
-                                                         capital_summary: @capital_summary)
-    end
-
-    def vehicles
-      @vehicles ||= Assessors::VehicleAssessor.call(@capital_summary.vehicles)
     end
 
     def property_maximum_mortgage_allowance_threshold
