@@ -4,15 +4,14 @@ Feature:
     Scenario: A SMOD bank account whose value is entirely disregarded
         Given I am undertaking a standard assessment with an applicant who receives passporting benefits
         And I add the following capital details for "bank_accounts" in the current assessment:
-            | description | value   | subject_matter_of_dispute |
-            | Bank acc 1  | 5000.0  | true                      |
-            | Bank acc 2  | 25000.0 | false                     |
+            | description  | value   | subject_matter_of_dispute |
+            | Bank account | 5000.0  | true                      |
         When I retrieve the final assessment
         Then I should see the following "capital summary" details:
-            | attribute                           | value   |
-            | total_liquid                        | 30000.0 |
-            | subject_matter_of_dispute_disregard | 5000.0  |
-            | assessed_capital                    | 25000.0 |
+            | attribute                           | value  |
+            | total_liquid                        | 5000.0 |
+            | subject_matter_of_dispute_disregard | 5000.0 |
+            | assessed_capital                    | 0.0    |
 
     Scenario: A SMOD investment whose value is entirely disregarded
         Given I am undertaking a standard assessment with an applicant who receives passporting benefits
