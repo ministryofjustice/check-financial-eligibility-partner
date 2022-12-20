@@ -283,6 +283,16 @@ jobs:
 #        event: fail
 #        template: basic_fail_1
 
+  deploy_infrastructure_uat:
+    executor: cloud-platform-executor
+    steps:
+      - checkout
+      - *authenticate_k8s
+      - deploy:
+          name: Deploy Check Financial Eligibility Partner/infrastructure to UAT
+          command: |
+            kubectl apply --record=false -f ./infrastructure/check-financial-eligibility-partner-uat/
+
 workflows:
   version: 2
   add_branch:
@@ -319,6 +329,8 @@ workflows:
             - check_swagger
             - unit_tests
             - build_and_push
+      - deploy_infrastructure_uat:
+          context: laa-estimate-eligibility-uat
       - delete_dependabot_deployment:
           context: check-financial-eligibility-partner-uat
           filters:
