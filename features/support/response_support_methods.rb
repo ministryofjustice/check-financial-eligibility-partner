@@ -1,6 +1,8 @@
 RESPONSE_SECTION_MAPPINGS = {
   "v5" => {
     "assessment_result" => "result_summary.overall_result.result",
+    "total capital contribution" => "result_summary.overall_result.combined_capital_contribution",
+    "total income contribution" => "result_summary.overall_result.income_contribution",
     "disposable_income_summary" => "result_summary.disposable_income",
     "capital summary" => "result_summary.capital",
     "capital_lower_threshold" => "result_summary.capital.proceeding_types.0.lower_threshold",
