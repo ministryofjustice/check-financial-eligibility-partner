@@ -48,8 +48,8 @@ Feature:
     And I should see the following overall summary:
       | attribute                  | value                 |
       | assessment_result          | contribution_required |
-      | total income contribution  | 15.08                 |
-      | total capital contribution | 0.0                   |
+      | income contribution        | 15.08                 |
+      | capital contribution       | 0.0                   |
 
   Scenario: A applicant with a partner with capital and both pensioners
     Given I am undertaking a standard assessment with a pensioner applicant who is not passported
@@ -68,6 +68,6 @@ Feature:
     And I should see the following overall summary:
       | attribute                  | value                 |
       | assessment_result          | contribution_required |
-      | total income contribution  | 15.08                 |
-      | total capital contribution | 61900.0               |
+      | income contribution        | 15.08                 |
+      | capital contribution       | 61900.0               |
 
