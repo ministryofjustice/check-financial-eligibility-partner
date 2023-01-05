@@ -5,11 +5,12 @@ module Calculators
 
     delegate :housing_cost_outgoings, to: :@disposable_income_summary
 
-    def initialize(disposable_income_summary:, gross_income_summary:, submission_date:, person:)
+    def initialize(disposable_income_summary:, gross_income_summary:, submission_date:, person:, allow_negative_net: false)
       @disposable_income_summary = disposable_income_summary
       @gross_income_summary = gross_income_summary
       @submission_date = submission_date
       @person = person
+      @allow_negative_net = allow_negative_net
     end
 
     def net_housing_costs
@@ -21,7 +22,7 @@ module Calculators
                             gross_cost_minus_housing_benefit
                           end
 
-      [net_housing_costs, 0.0].max
+      @allow_negative_net ? net_housing_costs : [net_housing_costs, 0.0].max
     end
 
     def gross_housing_costs

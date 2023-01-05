@@ -1,9 +1,9 @@
 module Collators
   class HousingCostsCollator
     class << self
-      def call(disposable_income_summary:, gross_income_summary:, submission_date:, person:)
+      def call(disposable_income_summary:, gross_income_summary:, submission_date:, person:, allow_negative_net: false)
         housing_calculator = Calculators::HousingCostsCalculator.new(disposable_income_summary:, gross_income_summary:,
-                                                                     submission_date:, person:)
+                                                                     submission_date:, person:, allow_negative_net:)
 
         disposable_income_summary.update!(
           housing_benefit: housing_calculator.monthly_housing_benefit,
