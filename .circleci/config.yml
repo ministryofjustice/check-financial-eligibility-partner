@@ -315,7 +315,6 @@ workflows:
       - deploy_uat:
           context: check-financial-eligibility-partner-uat
           requires:
-            - lint_checks
             - check_swagger
             - build_and_push
           filters:
