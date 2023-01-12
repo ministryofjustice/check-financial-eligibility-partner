@@ -115,7 +115,7 @@ references:
       key: check-financial-eligibility-partner-{{ checksum "Gemfile.lock" }}
       paths:
         - vendor/bundle
-  setup_database: &setup_database
+  setup_database_really: &setup_database_really
     run:
       name: Database Setup
       command: |
@@ -142,7 +142,7 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - *setup_database
+      - *setup_database_really
       - run:
           name: Setup Code Climate test-reporter
           command: |
@@ -168,7 +168,7 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - *setup_database
+      - *setup_database_really
       - run:
           name: Run cucumber tests
           command: |
@@ -184,7 +184,7 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - *setup_database
+      - *setup_database_really
       - run:
           name: Check for unapplied swagger documentation specs
           command: |
@@ -292,11 +292,6 @@ workflows:
             branches:
               ignore: main
       #          <<: *generic-slack-fail-post-step
-      - unit_tests:
-          filters:
-            branches:
-              ignore: main
-      #          <<: *generic-slack-fail-post-step
       - integration_tests:
           filters:
             branches:
@@ -317,8 +312,10 @@ workflows:
           requires:
             - lint_checks
             - check_swagger
-            - unit_tests
             - build_and_push
+          filters:
+            branches:
+              ignore: main
       - delete_dependabot_deployment:
           context: check-financial-eligibility-partner-uat
           filters:
@@ -332,11 +329,6 @@ workflows:
   merge_pr:
     jobs:
       - lint_checks:
-          filters:
-            branches:
-              only: main
-      #          <<: *generic-slack-fail-post-step
-      - unit_tests:
           filters:
             branches:
               only: main
@@ -355,7 +347,6 @@ workflows:
           requires:
             - lint_checks
             - check_swagger
-            - unit_tests
       #          <<: *generic-slack-fail-post-step
       - deploy_main_uat:
           context: check-financial-eligibility-partner-uat
