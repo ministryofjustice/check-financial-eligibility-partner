@@ -15,7 +15,7 @@ module Decorators
       end
 
       describe "#as_json" do
-        subject(:decorator) { described_class.new(assessment).as_json }
+        subject(:decorator) { described_class.new(assessment, nil).as_json }
 
         it "has the required keys in the returned hash" do
           expected_keys = %i[
@@ -24,11 +24,8 @@ module Decorators
             submission_date
             applicant
             gross_income
-            partner_gross_income
             disposable_income
-            partner_disposable_income
             capital
-            partner_capital
             remarks
           ]
           expect(decorator.keys).to eq %i[version timestamp success result_summary assessment]

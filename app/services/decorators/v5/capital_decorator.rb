@@ -46,7 +46,16 @@ module Decorators
       end
 
       def vehicles
-        @summary.vehicles.map { |v| VehicleDecorator.new(v).as_json }
+        @summary.vehicles.map do |v|
+          value = Assessors::VehicleAssessor.call(
+            value: v.value,
+            loan_amount_outstanding: v.loan_amount_outstanding,
+            date_of_purchase: v.date_of_purchase,
+            in_regular_use: v.in_regular_use,
+            submission_date: @summary.assessment.submission_date,
+          )
+          VehicleDecorator.new(v, value).as_json
+        end
       end
     end
   end

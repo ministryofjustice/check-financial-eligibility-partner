@@ -18,14 +18,14 @@ module Calculators
   private
 
     def process_single_employment
-      @employment&.calculate!
+      @employment&.calculate! @submission_date
 
-      @gross_income_summary.update!(gross_employment_income:,
-                                    benefits_in_kind: monthly_benefits_in_kind)
-      @disposable_income_summary.update!(employment_income_deductions: deductions,
-                                         fixed_employment_allowance: allowance,
-                                         tax: taxes,
-                                         national_insurance: ni_contributions)
+      EmploymentIncomeResult.new(gross_employment_income:,
+                                 benefits_in_kind: monthly_benefits_in_kind,
+                                 employment_income_deductions: deductions,
+                                 fixed_employment_allowance: allowance,
+                                 tax: taxes,
+                                 national_insurance: ni_contributions).freeze
     end
 
     def gross_employment_income

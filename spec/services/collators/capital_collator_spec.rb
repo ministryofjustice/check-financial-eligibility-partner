@@ -40,8 +40,12 @@ module Collators
       end
 
       context "vehicle assessment" do
+        before do
+          create(:vehicle, capital_summary: assessment.capital_summary)
+        end
+
         it "instantiates and calls the Vehicle Assesment service" do
-          allow(Assessors::VehicleAssessor).to receive(:call).and_return(2_500.0)
+          allow(Assessors::VehicleAssessor).to receive(:call).and_return(value: 2_500.0)
           collator
           expect(collator[:total_vehicle]).to eq 2_500.0
         end
@@ -56,6 +60,10 @@ module Collators
       end
 
       context "summarization of result_fields" do
+        before do
+          create(:vehicle, capital_summary: assessment.capital_summary)
+        end
+
         let(:pcd_value) { 100_000 }
 
         it "summarizes the results it gets from the subservices" do
@@ -65,7 +73,7 @@ module Collators
 
           allow(Assessors::LiquidCapitalAssessor).to receive(:call).and_return(145.83)
           allow(Assessors::NonLiquidCapitalAssessor).to receive(:call).and_return(500)
-          allow(Assessors::VehicleAssessor).to receive(:call).and_return(2_500.0)
+          allow(Assessors::VehicleAssessor).to receive(:call).and_return(value: 2_500.0)
           allow(property_service).to receive(:call).and_return(23_000.0)
 
           collator

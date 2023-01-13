@@ -19,7 +19,7 @@ module Workflows
       disposable_income_assessment
       return if assessment.disposable_income_summary.ineligible?
 
-      collate_and_assess_capital
+      CapitalCollatorAndAssessor.call assessment
     end
 
   private
@@ -116,10 +116,6 @@ module Workflows
       end
       Assessors::DisposableIncomeAssessor.call(disposable_income_summary: assessment.disposable_income_summary,
                                                total_disposable_income: assessment.disposable_income_summary.combined_total_disposable_income)
-    end
-
-    def collate_and_assess_capital
-      CapitalCollatorAndAssessor.call assessment
     end
 
     def calculate_childcare_eligibility(applicant, partner = nil)

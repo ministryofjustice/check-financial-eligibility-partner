@@ -29,8 +29,8 @@ private
   end
 
   def perform_assessment
-    Workflows::MainWorkflow.call(assessment)
-    render json: decorator_klass.new(assessment).as_json
+    result = Workflows::MainWorkflow.call(assessment)
+    render json: Decorators::V5::AssessmentDecorator.new(assessment, result).as_json
   end
 
   def version
@@ -47,9 +47,5 @@ private
 
   def assessment
     @assessment ||= Assessment.find(params[:id])
-  end
-
-  def decorator_klass
-    Decorators::V5::AssessmentDecorator
   end
 end
