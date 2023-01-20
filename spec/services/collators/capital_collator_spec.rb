@@ -15,7 +15,8 @@ module Collators
         described_class.call submission_date: assessment.submission_date,
                              capital_summary: assessment.capital_summary,
                              pensioner_capital_disregard: pcd_value,
-                             maximum_subject_matter_of_dispute_disregard: smod_value
+                             maximum_subject_matter_of_dispute_disregard: smod_value,
+                             lower_threshold: 4_000
       end
 
       it "always returns a hash" do

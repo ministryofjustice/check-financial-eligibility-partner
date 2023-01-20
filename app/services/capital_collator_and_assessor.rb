@@ -6,6 +6,7 @@ class CapitalCollatorAndAssessor
         capital_summary: assessment.capital_summary,
         maximum_subject_matter_of_dispute_disregard: maximum_subject_matter_of_dispute_disregard(assessment),
         pensioner_capital_disregard: pensioner_capital_disregard(assessment),
+        lower_threshold: lower_threshold(assessment),
       )
       assessment.capital_summary.update!(data)
       if assessment.partner.present?
@@ -14,6 +15,7 @@ class CapitalCollatorAndAssessor
           capital_summary: assessment.partner_capital_summary,
           pensioner_capital_disregard: 0,
           maximum_subject_matter_of_dispute_disregard: 0,
+          lower_threshold: lower_threshold(assessment),
         )
         assessment.partner_capital_summary.update!(partner_data)
         assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital +
@@ -58,6 +60,10 @@ class CapitalCollatorAndAssessor
 
     def maximum_subject_matter_of_dispute_disregard(assessment)
       Threshold.value_for(:subject_matter_of_dispute_disregard, at: assessment.submission_date)
+    end
+
+    def lower_threshold(assessment)
+      assessment.capital_summary.eligibilities.first.lower_threshold
     end
   end
 end

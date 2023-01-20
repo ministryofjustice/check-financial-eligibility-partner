@@ -14,16 +14,17 @@ module Collators
     }.freeze
 
     class << self
-      def call(submission_date:, capital_summary:, pensioner_capital_disregard:, maximum_subject_matter_of_dispute_disregard:)
-        new(submission_date:, capital_summary:, pensioner_capital_disregard:, maximum_subject_matter_of_dispute_disregard:).call
+      def call(submission_date:, capital_summary:, pensioner_capital_disregard:, maximum_subject_matter_of_dispute_disregard:, lower_threshold:)
+        new(submission_date:, capital_summary:, pensioner_capital_disregard:, maximum_subject_matter_of_dispute_disregard:, lower_threshold:).call
       end
     end
 
-    def initialize(submission_date:, capital_summary:, pensioner_capital_disregard:, maximum_subject_matter_of_dispute_disregard:)
+    def initialize(submission_date:, capital_summary:, pensioner_capital_disregard:, maximum_subject_matter_of_dispute_disregard:, lower_threshold:)
       @submission_date = submission_date
       @capital_summary = capital_summary
       @pensioner_capital_disregard = pensioner_capital_disregard
       @maximum_subject_matter_of_dispute_disregard = maximum_subject_matter_of_dispute_disregard
+      @lower_threshold = lower_threshold
     end
 
     def call
@@ -59,12 +60,8 @@ module Collators
       Threshold.value_for(:property_maximum_mortgage_allowance, at: @submission_date)
     end
 
-    def lower_threshold
-      Threshold.value_for(:capital_lower, at: @submission_date)
-    end
-
     def capital_contribution
-      [0, assessed_capital - lower_threshold].max
+      [0, assessed_capital - @lower_threshold].max
     end
   end
 end
