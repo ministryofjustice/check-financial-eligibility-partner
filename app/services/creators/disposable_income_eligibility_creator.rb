@@ -28,7 +28,7 @@ module Creators
       if @assessment.level_of_representation == "controlled"
         Threshold.value_for(:disposable_income_lower_controlled, at: @assessment.submission_date)
       else
-        Threshold.value_for(:disposable_income_lower, at: @assessment.submission_date)
+        Threshold.value_for(:disposable_income_lower_certificated, at: @assessment.submission_date)
       end
     end
 

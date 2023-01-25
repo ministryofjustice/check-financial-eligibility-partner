@@ -30,7 +30,7 @@ module Creators
       if @assessment.level_of_representation == "controlled"
         Threshold.value_for(:capital_lower_controlled, at: @assessment.submission_date)
       else
-        Threshold.value_for(:capital_lower, at: @assessment.submission_date)
+        Threshold.value_for(:capital_lower_certificated, at: @assessment.submission_date)
       end
     end
 
