@@ -120,9 +120,6 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - run:
-          name: Run Rubocop
-          command:  bundle exec rubocop
 
   unit_tests:
     executor: test-executor
@@ -132,7 +129,6 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - *setup_database
       - run:
           name: Setup Code Climate test-reporter
           command: |
@@ -168,11 +164,6 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - *setup_database
-      - run:
-          name: Run cucumber tests
-          command: |
-            bundle exec cucumber --format html --out report.html --format pretty
       - store_artifacts:
           path: ./report.html
 
@@ -184,11 +175,6 @@ jobs:
       - *restore_gems_cache
       - *install_gems
       - *save_gems_cache
-      - *setup_database
-      - run:
-          name: Check for unapplied swagger documentation specs
-          command: |
-            bundle exec rails check_swaggerization
 
   build_and_push:
     executor: basic-executor

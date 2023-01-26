@@ -1,43 +1,24 @@
-FROM ruby:3.2.1-alpine3.17 as builder
+FROM ruby:3.2.1-alpine
 
-ENV RAILS_ENV production
+RUN addgroup -g 1000 -S appgroup && \
+    adduser -u 1000 -S appuser -G appgroup
 
-RUN set -ex
+RUN apk update \
+ && apk add --no-cache  \
+    build-base  \
+    ruby-dev
 
-RUN apk --no-cache add build-base \
-                       postgresql-dev
+WORKDIR /app
 
-COPY Gemfile Gemfile
-COPY Gemfile.lock Gemfile.lock
+COPY Gemfile Gemfile.lock config.ru ./
 
-RUN gem update --system
-RUN bundle config --local without test:development && bundle install
+RUN bundle install
 
+COPY app.rb ./
 
-FROM ruby:3.2.1-alpine3.17
-RUN apk --no-cache add postgresql-client
+RUN chown -R appuser:appgroup /app
 
-COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
-COPY . /myapp
+USER 1000
 
-WORKDIR /myapp
-
-EXPOSE 3000
-
-RUN adduser --disabled-password apply -u 1001
-RUN chown -R apply:apply /myapp
-
-# expect ping environment variables
-ARG BUILD_DATE
-ARG BUILD_TAG
-ARG APP_BRANCH
-# set ping environment variables
-ENV BUILD_DATE=${BUILD_DATE}
-ENV BUILD_TAG=${BUILD_TAG}
-ENV APP_BRANCH=${APP_BRANCH}
-# allow public files to be served
-ENV RAILS_SERVE_STATIC_FILES true
-
-USER 1001
-
-CMD ["docker/run"]
+EXPOSE 4567/TCP
+CMD [ "bundle", "exec", "rackup", "--host", "0.0.0.0", "-p", "4567" ]
