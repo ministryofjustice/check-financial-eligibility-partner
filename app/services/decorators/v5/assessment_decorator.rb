@@ -1,16 +1,14 @@
 module Decorators
   module V5
     class AssessmentDecorator
-      attr_reader :assessment
-
       delegate :applicant,
-               :capital_summary,
                :gross_income_summary,
                :remarks,
                :disposable_income_summary, to: :assessment
 
-      def initialize(assessment)
+      def initialize(assessment, result)
         @assessment = assessment
+        @result = result
       end
 
       def as_json
@@ -18,6 +16,8 @@ module Decorators
       end
 
     private
+
+      attr_reader :assessment
 
       def payload
         {
@@ -39,7 +39,7 @@ module Decorators
           partner_gross_income:,
           disposable_income: DisposableIncomeDecorator.new(disposable_income_summary).as_json,
           partner_disposable_income:,
-          capital: CapitalDecorator.new(capital_summary).as_json,
+          capital: CapitalDecorator.new(assessment.capital_summary, @result.vehicles).as_json,
           partner_capital:,
           remarks: RemarksDecorator.new(remarks, assessment).as_json,
         }
@@ -61,7 +61,7 @@ module Decorators
       def partner_capital
         return unless assessment.partner
 
-        CapitalDecorator.new(assessment.partner_capital_summary).as_json
+        CapitalDecorator.new(assessment.partner_capital_summary, @result.partner_vehicles).as_json
       end
     end
   end

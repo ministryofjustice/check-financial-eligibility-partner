@@ -75,6 +75,7 @@ module Workflows
 
           before do
             create(:partner, :over_pensionable_age, assessment:)
+            create(:vehicle, capital_summary: assessment.partner_capital_summary, value: 0)
             create(:property, :additional_property, capital_summary: assessment.partner_capital_summary,
                                                     value: 170_000, outstanding_mortgage: 100_000, percentage_owned: 100)
           end

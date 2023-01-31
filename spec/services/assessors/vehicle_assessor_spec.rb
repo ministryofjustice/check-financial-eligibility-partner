@@ -4,7 +4,7 @@ module Assessors
   RSpec.describe VehicleAssessor do
     let(:assessment) { create :assessment, :with_capital_summary }
     let(:capital_summary) { assessment.capital_summary }
-    let!(:vehicle) do
+    let(:vehicle) do
       create :vehicle,
              capital_summary:,
              value: estimated_value,
@@ -13,9 +13,11 @@ module Assessors
              in_regular_use:
     end
 
-    before do
-      described_class.call capital_summary.vehicles
-      vehicle.reload
+    let(:result) do
+      described_class.call value: vehicle.value, in_regular_use: vehicle.in_regular_use,
+                           loan_amount_outstanding: vehicle.loan_amount_outstanding,
+                           submission_date: assessment.submission_date,
+                           date_of_purchase: vehicle.date_of_purchase
     end
 
     describe "#call" do
@@ -30,8 +32,7 @@ module Assessors
             let(:loan_amount_outstanding) { 0.0 }
 
             it "is not included in the assessment" do
-              expect(vehicle.included_in_assessment).to be false
-              expect(vehicle.assessed_value).to eq 0.0
+              expect(result).to eq(VehicleResult.new(included_in_assessment: false, value: 0))
             end
           end
 
@@ -40,8 +41,7 @@ module Assessors
             let(:loan_amount_outstanding) { 0.0 }
 
             it "is not included in the assessment" do
-              expect(vehicle.included_in_assessment).to be false
-              expect(vehicle.assessed_value).to eq 0.0
+              expect(result).to eq(VehicleResult.new(included_in_assessment: false, value: 0))
             end
           end
         end
@@ -56,8 +56,7 @@ module Assessors
               let(:date_of_purchase) { 37.months.ago.to_date }
 
               it "is not included in the assessment" do
-                expect(vehicle.included_in_assessment).to be false
-                expect(vehicle.assessed_value).to eq 0.0
+                expect(result).to eq(VehicleResult.new(included_in_assessment: false, value: 0))
               end
             end
 
@@ -65,8 +64,7 @@ module Assessors
               let(:date_of_purchase) { 3.months.ago.to_date }
 
               it "is not included in the assessment" do
-                expect(vehicle.included_in_assessment).to be false
-                expect(vehicle.assessed_value).to eq 0.0
+                expect(result).to eq(VehicleResult.new(included_in_assessment: false, value: 0))
               end
             end
           end
@@ -78,8 +76,7 @@ module Assessors
               let(:date_of_purchase) { 40.months.ago.to_date }
 
               it "is not included in the assessment" do
-                expect(vehicle.included_in_assessment).to be false
-                expect(vehicle.assessed_value).to eq 0.0
+                expect(result).to eq(VehicleResult.new(included_in_assessment: false, value: 0))
               end
             end
 
@@ -87,8 +84,7 @@ module Assessors
               let(:date_of_purchase) { 10.months.ago.to_date }
 
               it "is assessed at estimated value - loan amount outstanding - 15,000" do
-                expect(vehicle.included_in_assessment).to be true
-                expect(vehicle.assessed_value).to eq 4_000.0
+                expect(result).to eq(VehicleResult.new(included_in_assessment: true, value: 4000.0))
               end
             end
           end
@@ -106,8 +102,7 @@ module Assessors
             let(:loan_amount_outstanding) { 1_000.0 }
 
             it "is assessed at the estimated value" do
-              expect(vehicle.included_in_assessment).to be true
-              expect(vehicle.assessed_value).to eq 18_450.0
+              expect(result).to eq(VehicleResult.new(included_in_assessment: true, value: 18_450.0))
             end
           end
 
@@ -115,8 +110,7 @@ module Assessors
             let(:loan_amount_outstanding) { 12_000 }
 
             it "is assessed at the estimated value" do
-              expect(vehicle.included_in_assessment).to be true
-              expect(vehicle.assessed_value).to eq 18_450.0
+              expect(result).to eq(VehicleResult.new(included_in_assessment: true, value: 18_450.0))
             end
           end
         end
@@ -128,8 +122,7 @@ module Assessors
             let(:loan_amount_outstanding) { 0.0 }
 
             it "is assessed at the estimated value" do
-              expect(vehicle.included_in_assessment).to be true
-              expect(vehicle.assessed_value).to eq 18_450.0
+              expect(result).to eq(VehicleResult.new(included_in_assessment: true, value: 18_450.0))
             end
           end
 
@@ -137,8 +130,7 @@ module Assessors
             let(:loan_amount_outstanding) { 10_900.0 }
 
             it "is assessed at the estimated value" do
-              expect(vehicle.included_in_assessment).to be true
-              expect(vehicle.assessed_value).to eq 18_450.0
+              expect(result).to eq(VehicleResult.new(included_in_assessment: true, value: 18_450.0))
             end
           end
         end

@@ -3,7 +3,9 @@ require "rails_helper"
 module Calculators
   RSpec.describe SubjectMatterOfDisputeDisregardCalculator do
     subject(:value) do
-      described_class.new(capital_summary:,
+      described_class.new(submission_date: capital_summary.assessment.submission_date,
+                          disputed_vehicle_value:,
+                          capital_summary:,
                           maximum_disregard:).value
     end
 
@@ -13,20 +15,24 @@ module Calculators
              capital_items: [capital_item],
              properties: [property]
     end
-    let(:vehicle) { create :vehicle, subject_matter_of_dispute: false }
+    let(:vehicle) { create :vehicle, subject_matter_of_dispute: smod_vehicle }
     let(:capital_item) { create :liquid_capital_item, subject_matter_of_dispute: false }
     let(:property) { create :property, subject_matter_of_dispute: false }
     let(:maximum_disregard) { 10_000 }
 
     describe "#value" do
       context "without any SMOD assets" do
+        let(:smod_vehicle) { false }
+        let(:disputed_vehicle_value) { 0 }
+
         it "returns 0" do
           expect(value).to eq 0
         end
       end
 
       context "with a SMOD vehicle worth less than the disregard" do
-        let(:vehicle) { create :vehicle, assessed_value: 1_000, subject_matter_of_dispute: true }
+        let(:disputed_vehicle_value) { 1000 }
+        let(:smod_vehicle) { true }
 
         it "returns the value of the vehicle" do
           expect(value).to eq 1_000
@@ -34,6 +40,8 @@ module Calculators
       end
 
       context "with a SMOD property worth less than the disregard" do
+        let(:smod_vehicle) { false }
+        let(:disputed_vehicle_value) { 0 }
         let(:property) { create :property, assessed_equity: 5_000, subject_matter_of_dispute: true }
 
         it "returns the value of the property" do
@@ -42,6 +50,8 @@ module Calculators
       end
 
       context "with a SMOD capital item worth less than the disregard" do
+        let(:smod_vehicle) { false }
+        let(:disputed_vehicle_value) { 0 }
         let(:capital_item) { create :liquid_capital_item, value: 3_000, subject_matter_of_dispute: true }
 
         it "returns the value of the capital item" do
@@ -51,7 +61,8 @@ module Calculators
 
       context "with multiple SMOD assets worth less than the disregard" do
         let(:capital_item) { create :liquid_capital_item, value: 3_000, subject_matter_of_dispute: true }
-        let(:vehicle) { create :vehicle, assessed_value: 1_000, subject_matter_of_dispute: true }
+        let(:smod_vehicle) { true }
+        let(:disputed_vehicle_value) { 1_000 }
         let(:property) { create :property, assessed_equity: 5_000, subject_matter_of_dispute: true }
 
         it "returns the combined value of the assets" do
@@ -61,8 +72,9 @@ module Calculators
 
       context "with multiple SMOD assets worth more than the disregard" do
         let(:capital_item) { create :liquid_capital_item, value: 3_000, subject_matter_of_dispute: true }
-        let(:vehicle) { create :vehicle, assessed_value: 1_000, subject_matter_of_dispute: true }
         let(:property) { create :property, assessed_equity: 9_000, subject_matter_of_dispute: true }
+        let(:smod_vehicle) { true }
+        let(:disputed_vehicle_value) { 1_000 }
 
         it "returns the disregard value" do
           expect(value).to eq 10_000
@@ -70,8 +82,9 @@ module Calculators
       end
 
       context "if there is no valid upper limit provided" do
+        let(:smod_vehicle) { true }
+        let(:disputed_vehicle_value) { 1_000 }
         let(:capital_item) { create :liquid_capital_item, value: 3_000, subject_matter_of_dispute: true }
-        let(:vehicle) { create :vehicle, assessed_value: 1_000, subject_matter_of_dispute: true }
         let(:property) { create :property, assessed_equity: 9_000, subject_matter_of_dispute: true }
         let(:maximum_disregard) { nil }
 

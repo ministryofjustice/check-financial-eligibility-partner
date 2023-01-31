@@ -8,6 +8,13 @@ class CapitalCollatorAndAssessor
         pensioner_capital_disregard: pensioner_capital_disregard(assessment),
       )
       assessment.capital_summary.update!(data)
+      vehicles = assessment.capital_summary.vehicles.map do |v|
+        Assessors::VehicleAssessor.call(value: v.value,
+                                        loan_amount_outstanding: v.loan_amount_outstanding,
+                                        submission_date: assessment.submission_date,
+                                        in_regular_use: v.in_regular_use,
+                                        date_of_purchase: v.date_of_purchase)
+      end
       if assessment.partner.present?
         partner_data = Collators::CapitalCollator.call(
           submission_date: assessment.submission_date,
@@ -16,12 +23,23 @@ class CapitalCollatorAndAssessor
           maximum_subject_matter_of_dispute_disregard: 0,
         )
         assessment.partner_capital_summary.update!(partner_data)
+        partner_vehicles = assessment.partner_capital_summary.vehicles.map do |v|
+          Assessors::VehicleAssessor.call(value: v.value,
+                                          loan_amount_outstanding: v.loan_amount_outstanding,
+                                          submission_date: assessment.submission_date,
+                                          in_regular_use: v.in_regular_use,
+                                          date_of_purchase: v.date_of_purchase)
+        end
+
         assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital +
                                                                         assessment.partner_capital_summary.assessed_capital)
+        Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
+        AssessmentResult.new vehicles: vehicles, partner_vehicles: partner_vehicles
       else
         assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital)
+        Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
+        AssessmentResult.new vehicles: vehicles
       end
-      Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
     end
 
   private
