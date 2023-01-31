@@ -96,7 +96,7 @@ RSpec.describe AssessmentsController, type: :request do
         let(:decorator) { instance_double Decorators::V5::AssessmentDecorator }
 
         it "calls the required services and uses the V5 decorator" do
-          allow(Decorators::V5::AssessmentDecorator).to receive(:new).with(assessment).and_return(decorator)
+          allow(Decorators::V5::AssessmentDecorator).to receive(:new).with(assessment, nil).and_return(decorator)
           allow(decorator).to receive(:as_json).and_return("")
 
           get_assessment

@@ -13,9 +13,17 @@ module Decorators
                :with_applicant,
                :with_eligibilities
       end
+      let(:calculation_output) do
+        CalculationOutput.new(
+          capital_collation: CapitalCollatorAndAssessor::CapitalCollation.new(
+            CapitalCollatorAndAssessor::PersonCapitalCollation.new(0),
+            CapitalCollatorAndAssessor::PersonCapitalCollation.new(0),
+          ),
+        )
+      end
 
       describe "#as_json" do
-        subject(:decorator) { described_class.new(assessment).as_json }
+        subject(:decorator) { described_class.new(assessment, calculation_output).as_json }
 
         it "has the required keys in the returned hash" do
           expected_keys = %i[
