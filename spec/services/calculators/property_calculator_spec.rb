@@ -356,20 +356,5 @@ module Calculators
         end
       end
     end
-
-    describe "#remaining_mortgage_allowance" do
-      it "returns 100_000" do
-        expect(service.remaining_mortgage_allowance).to eq 100_000
-      end
-
-      context "submission date on or after 28/1/2021" do
-        let(:day) { [28, 30].sample }
-        let(:submission_date) { Time.zone.local(2021, 1, day) }
-
-        it "returns 999_999_999_999" do
-          expect(service.remaining_mortgage_allowance).to eq 999_999_999_999
-        end
-      end
-    end
   end
 end
