@@ -34,11 +34,11 @@ class CapitalCollatorAndAssessor
         assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital +
                                                                         assessment.partner_capital_summary.assessed_capital)
         Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
-        AssessmentResult.new vehicles: vehicles, partner_vehicles: partner_vehicles
+        AssessmentResult.new vehicles:, partner_vehicles:
       else
         assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital)
         Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
-        AssessmentResult.new vehicles: vehicles
+        AssessmentResult.new vehicles:
       end
     end
 
