@@ -15,9 +15,9 @@ module Decorators
       end
       let(:calculation_output) do
         CalculationOutput.new(
-          capital_collation: CapitalCollatorAndAssessor::CapitalCollation.new(
-            CapitalCollatorAndAssessor::PersonCapitalCollation.new(0),
-            CapitalCollatorAndAssessor::PersonCapitalCollation.new(0),
+          capital_subtotals: CapitalCollatorAndAssessor::CapitalSubtotals.new(
+            applicant_capital_subtotals: CapitalCollatorAndAssessor::PersonCapitalSubtotals.new(total_vehicle: 0),
+            partner_capital_subtotals: CapitalCollatorAndAssessor::PersonCapitalSubtotals.new(total_vehicle: 0),
           ),
         )
       end

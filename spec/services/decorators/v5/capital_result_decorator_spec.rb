@@ -26,7 +26,7 @@ module Decorators
                assessed_capital: 9_355,
                combined_assessed_capital: 12_000
       end
-      let(:collation) { CapitalCollatorAndAssessor::PersonCapitalCollation.new(3500) }
+      let(:subtotals) { CapitalCollatorAndAssessor::PersonCapitalSubtotals.new(total_vehicle: 3500) }
 
       let(:expected_result) do
         {
@@ -73,7 +73,7 @@ module Decorators
         end
       end
 
-      subject(:decorator) { described_class.new(assessment.capital_summary, collation).as_json }
+      subject(:decorator) { described_class.new(assessment.capital_summary, subtotals).as_json }
 
       describe "#as_json" do
         it "returns the expected structure" do

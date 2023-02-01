@@ -1,7 +1,7 @@
 class CalculationOutput
-  def initialize(capital_collation:)
-    @capital_collation = capital_collation
+  def initialize(capital_subtotals:)
+    @capital_subtotals = capital_subtotals
   end
 
-  attr_reader :capital_collation
+  attr_reader :capital_subtotals
 end

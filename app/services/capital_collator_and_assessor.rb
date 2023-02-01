@@ -1,6 +1,6 @@
 class CapitalCollatorAndAssessor
-  PersonCapitalCollation = Struct.new(:total_vehicle)
-  CapitalCollation = Struct.new(:applicant_capital_collation, :partner_capital_collation)
+  PersonCapitalSubtotals = Struct.new(:total_vehicle, keyword_init: true)
+  CapitalSubtotals = Struct.new(:applicant_capital_subtotals, :partner_capital_subtotals, keyword_init: true)
   class << self
     def call(assessment)
       data = collate_applicant_capital(assessment)
@@ -14,9 +14,9 @@ class CapitalCollatorAndAssessor
         assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital)
       end
       Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
-      CapitalCollation.new(
-        PersonCapitalCollation.new(data[:total_vehicle]),
-        (PersonCapitalCollation.new(partner_data[:total_vehicle]) if assessment.partner.present?),
+      CapitalSubtotals.new(
+        applicant_capital_subtotals: PersonCapitalSubtotals.new(total_vehicle: data[:total_vehicle]),
+        partner_capital_subtotals: (PersonCapitalSubtotals.new(total_vehicle: partner_data[:total_vehicle]) if assessment.partner.present?),
       )
     end
 

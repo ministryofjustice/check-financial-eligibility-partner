@@ -2,8 +2,8 @@ module Workflows
   class PassportedWorkflow
     class << self
       def call(assessment)
-        capital_collation = CapitalCollatorAndAssessor.call assessment
-        CalculationOutput.new(capital_collation:)
+        capital_subtotals = CapitalCollatorAndAssessor.call assessment
+        CalculationOutput.new(capital_subtotals:)
       end
     end
   end

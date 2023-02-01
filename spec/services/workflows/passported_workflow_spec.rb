@@ -21,7 +21,7 @@ module Workflows
         allow(Collators::CapitalCollator).to receive(:call).and_return(capital_data)
         expect(Collators::CapitalCollator).to receive(:call)
         result = workflow_call
-        expect(result.capital_collation.applicant_capital_collation.total_vehicle).to eq 500
+        expect(result.capital_subtotals.applicant_capital_subtotals.total_vehicle).to eq 500
         expect(capital_summary.reload).to have_matching_attributes(capital_data.except(:total_vehicle))
       end
 

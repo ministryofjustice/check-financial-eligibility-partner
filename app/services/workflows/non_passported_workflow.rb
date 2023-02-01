@@ -14,13 +14,13 @@ module Workflows
       return SelfEmployedWorkflow.call(assessment) if assessment.applicant.self_employed?
 
       collate_and_assess_gross_income
-      return CalculationOutput.new(capital_collation: nil) if assessment.gross_income_summary.ineligible?
+      return CalculationOutput.new(capital_subtotals: nil) if assessment.gross_income_summary.ineligible?
 
       disposable_income_assessment
-      return CalculationOutput.new(capital_collation: nil) if assessment.disposable_income_summary.ineligible?
+      return CalculationOutput.new(capital_subtotals: nil) if assessment.disposable_income_summary.ineligible?
 
-      capital_collation = collate_and_assess_capital
-      CalculationOutput.new(capital_collation:)
+      capital_subtotals = collate_and_assess_capital
+      CalculationOutput.new(capital_subtotals:)
     end
 
   private
