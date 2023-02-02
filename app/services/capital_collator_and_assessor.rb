@@ -1,6 +1,4 @@
 class CapitalCollatorAndAssessor
-  PersonCapitalSubtotals = Struct.new(:total_vehicle, keyword_init: true)
-  CapitalSubtotals = Struct.new(:applicant_capital_subtotals, :partner_capital_subtotals, keyword_init: true)
   class << self
     def call(assessment)
       data = collate_applicant_capital(assessment)

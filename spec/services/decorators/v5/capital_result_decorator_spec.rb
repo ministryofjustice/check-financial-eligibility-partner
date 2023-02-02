@@ -26,7 +26,7 @@ module Decorators
                assessed_capital: 9_355,
                combined_assessed_capital: 12_000
       end
-      let(:subtotals) { CapitalCollatorAndAssessor::PersonCapitalSubtotals.new(total_vehicle: 3500) }
+      let(:subtotals) { PersonCapitalSubtotals.new(total_vehicle: 3500) }
 
       let(:expected_result) do
         {

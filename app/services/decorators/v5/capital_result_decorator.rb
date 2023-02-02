@@ -18,7 +18,7 @@ module Decorators
         {
           total_liquid: summary.total_liquid.to_f,
           total_non_liquid: summary.total_non_liquid.to_f,
-          total_vehicle: @person_capital_subtotals&.total_vehicle.to_f,
+          total_vehicle: @person_capital_subtotals.total_vehicle.to_f,
           total_property: summary.total_property.to_f,
           total_mortgage_allowance: summary.total_mortgage_allowance.to_f,
           total_capital: summary.total_capital.to_f,

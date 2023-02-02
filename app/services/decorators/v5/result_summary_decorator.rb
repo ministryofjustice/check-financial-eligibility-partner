@@ -28,7 +28,7 @@ module Decorators
                                                                  partner_present: assessment.partner.present?).as_json,
           partner_disposable_income:,
           capital: CapitalResultDecorator.new(capital_summary,
-                                              @calculation_output&.capital_subtotals&.applicant_capital_subtotals).as_json,
+                                              @calculation_output.capital_subtotals.applicant_capital_subtotals).as_json,
           partner_capital:,
         }
       end
@@ -51,7 +51,7 @@ module Decorators
         return unless assessment.partner
 
         CapitalResultDecorator.new(assessment.partner_capital_summary,
-                                   @calculation_output&.capital_subtotals&.partner_capital_subtotals).as_json
+                                   @calculation_output.capital_subtotals&.partner_capital_subtotals).as_json
       end
     end
   end
