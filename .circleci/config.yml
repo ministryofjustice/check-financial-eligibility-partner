@@ -6,7 +6,7 @@ orbs:
 executors:
   basic-executor:
     docker:
-      - image: cimg/base:2022
+      - image: cimg/base:2022.01
   cloud-platform-executor:
     docker:
       - image: ministryofjustice/cloud-platform-tools:2.1
