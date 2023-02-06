@@ -6,7 +6,7 @@ orbs:
 executors:
   basic-executor:
     docker:
-      - image: cimg/base:2020.01
+      - image: cimg/base:2022
   cloud-platform-executor:
     docker:
       - image: ministryofjustice/cloud-platform-tools:2.1
@@ -83,14 +83,11 @@ references:
     run:
       name: Update packages
       command: sudo apt-get update
-  upgrade_packages: &upgrade_packages
-    run:
-      name: Update packages
-      command: sudo apt-get -y upgrade
   install_packages_for_testing: &install_packages_for_testing
     run:
       name: Install System packages needed for testing
       command: |
+        sudo apt-get update
         sudo apt-get install -y postgresql-client
   install_git_crypt: &install_git_crypt
     run:
@@ -200,17 +197,10 @@ jobs:
       - setup_remote_docker:
           version: 20.10.7
       - *update_packages
-      - restore_cache:
-          key: cfep-apt-get-v1-{{ checksum "/var/cache/apt/pkgcache.bin" }}
-      - *upgrade_packages
       - *install_git_crypt
       - *decrypt_secrets
       - *build_docker_image
       - *setup_aws_login
-      - save_cache:
-          key: cfep-apt-get-v1-{{ checksum "/var/cache/apt/pkgcache.bin" }}
-          paths:
-            - /var/cache/apt/archives
       - *push_to_ecr
 
   deploy_uat: &deploy_uat
