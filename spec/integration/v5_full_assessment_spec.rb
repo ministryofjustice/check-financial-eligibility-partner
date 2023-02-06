@@ -687,7 +687,7 @@ RSpec.describe "Full V5 passported spec", :vcr do
       net_housing_costs: 23.55,
       maintenance_allowance: 4.33,
       total_outgoings_and_allowances: 386.24,
-      total_disposable_income: -32.92666666666667,
+      total_disposable_income: -32.93,
       employment_income: { gross_income: 0.0, benefits_in_kind: 0.0, tax: 0.0, national_insurance: 0.0, fixed_employment_deduction: 0.0, net_employment_income: 0.0 },
       income_contribution: 0.0,
       proceeding_types: contain_exactly(

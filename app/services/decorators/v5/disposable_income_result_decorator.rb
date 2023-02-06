@@ -23,10 +23,10 @@ module Decorators
           dependant_allowance: summary.dependant_allowance.to_f,
           gross_housing_costs: summary.gross_housing_costs.to_f,
           housing_benefit: summary.housing_benefit.to_f,
-          net_housing_costs: summary.net_housing_costs.to_f,
+          net_housing_costs: summary.net_housing_costs.to_f.round(2),
           maintenance_allowance: summary.maintenance_out_all_sources.to_f,
           total_outgoings_and_allowances: summary.total_outgoings_and_allowances.to_f,
-          total_disposable_income: summary.total_disposable_income.to_f,
+          total_disposable_income: summary.total_disposable_income.to_f.round(2),
           employment_income:,
           income_contribution: summary.income_contribution.to_f,
         }
