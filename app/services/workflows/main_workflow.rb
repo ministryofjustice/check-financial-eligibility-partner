@@ -7,7 +7,7 @@ module Workflows
                            else
                              NonPassportedWorkflow.call(assessment)
                            end
-      RemarkGenerators::Orchestrator.call(assessment, assessment.capital_summary.combined_assessed_capital)
+      RemarkGenerators::Orchestrator.call(assessment, calculation_output.capital_subtotals.combined_assessed_capital)
       Assessors::MainAssessor.call(assessment)
       calculation_output
     end

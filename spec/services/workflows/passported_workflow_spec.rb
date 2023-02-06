@@ -17,12 +17,12 @@ module Workflows
     describe ".call" do
       subject(:workflow_call) { described_class.call(assessment) }
 
-      it "calls Capital collator and updates capital summary record" do
+      it "calls Capital collator and return some data" do
         allow(Collators::CapitalCollator).to receive(:call).and_return(capital_data)
         expect(Collators::CapitalCollator).to receive(:call)
         result = workflow_call
-        expect(result.capital_subtotals.applicant_capital_subtotals.total_vehicle).to eq 500
-        expect(capital_summary.reload).to have_matching_attributes(capital_data.slice(:pensioner_capital_disregard))
+        expect(result.capital_subtotals.applicant_capital_subtotals.total_vehicle).to eq capital_data[:total_vehicle]
+        expect(result.capital_subtotals.combined_assessed_capital).to eq capital_data[:assessed_capital]
       end
 
       it "calls CapitalAssessor and updates capital summary record with result" do

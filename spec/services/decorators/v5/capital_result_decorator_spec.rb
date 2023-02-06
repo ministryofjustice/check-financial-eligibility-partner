@@ -13,12 +13,9 @@ module Decorators
       end
       let(:pr_hash) { [%w[DA003 A], %w[SE014 Z]] }
       let(:summary) do
-        create :capital_summary,
-               assessment:,
-               pensioner_capital_disregard: 10_000,
-               subject_matter_of_dispute_disregard: 3_000,
-               combined_assessed_capital: 12_000
+        create :capital_summary, assessment:
       end
+
       let(:subtotals) do
         PersonCapitalSubtotals.new(total_vehicle: 3500,
                                    total_liquid: 9_355.23,
@@ -26,9 +23,12 @@ module Decorators
                                    total_property: 835_500,
                                    total_mortgage_allowance: 750_000,
                                    total_capital: 24_000,
-                                   assessed_capital: 9_355)
+                                   assessed_capital: 9_355,
+                                   pensioner_capital_disregard: 10_000,
+                                   subject_matter_of_dispute_disregard: 3_000)
       end
       let(:capital_contribution) { 0 }
+      let(:combined_assessed_capital) { 12_000 }
 
       let(:expected_result) do
         {
@@ -75,7 +75,7 @@ module Decorators
         end
       end
 
-      subject(:decorator) { described_class.new(assessment.capital_summary, subtotals, capital_contribution).as_json }
+      subject(:decorator) { described_class.new(assessment.capital_summary, subtotals, capital_contribution, combined_assessed_capital).as_json }
 
       describe "#as_json" do
         it "returns the expected structure" do

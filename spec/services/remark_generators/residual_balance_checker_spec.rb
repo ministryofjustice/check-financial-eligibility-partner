@@ -3,7 +3,7 @@ require "rails_helper"
 module RemarkGenerators
   RSpec.describe ResidualBalanceChecker do
     let(:assessment) { create :assessment, capital_summary: }
-    let(:capital_summary) { create :capital_summary, :with_eligibilities, lower_threshold: 3000 }
+    let(:capital_summary) { create :capital_summary, :with_eligibilities }
     let(:assessed_capital) { 4000 }
 
     context "when a residual balance exists and assessed capital is above the lower threshold" do
@@ -30,7 +30,7 @@ module RemarkGenerators
     end
 
     context "when capital assessment is below the lower threshold" do
-      let(:capital_summary) { create :capital_summary, :with_eligibilities, lower_threshold: 3000 }
+      let(:capital_summary) { create :capital_summary, :with_eligibilities }
 
       it "does not update the remarks class" do
         original_remarks = assessment.remarks.as_json
@@ -42,7 +42,7 @@ module RemarkGenerators
     context "when there is no residual balance and assessed capital is below the lower threshold" do
       before { create :liquid_capital_item, description: "Current accounts", value: 0, capital_summary: }
 
-      let(:capital_summary) { create :capital_summary, :with_eligibilities, lower_threshold: 3000 }
+      let(:capital_summary) { create :capital_summary, :with_eligibilities }
 
       it "does not update the remarks class" do
         original_remarks = assessment.remarks.as_json

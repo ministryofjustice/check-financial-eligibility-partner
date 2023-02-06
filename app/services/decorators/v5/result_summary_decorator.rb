@@ -29,7 +29,8 @@ module Decorators
           partner_disposable_income:,
           capital: CapitalResultDecorator.new(capital_summary,
                                               @calculation_output.capital_subtotals.applicant_capital_subtotals,
-                                              @calculation_output.capital_subtotals.capital_contribution.to_f).as_json,
+                                              @calculation_output.capital_subtotals.capital_contribution.to_f,
+                                              @calculation_output.capital_subtotals.combined_assessed_capital.to_f).as_json,
           partner_capital:,
         }
       end
@@ -53,7 +54,7 @@ module Decorators
 
         CapitalResultDecorator.new(assessment.partner_capital_summary,
                                    @calculation_output.capital_subtotals&.partner_capital_subtotals,
-                                   0).as_json
+                                   0, 0).as_json
       end
     end
   end
