@@ -22,7 +22,7 @@ module Workflows
         expect(Collators::CapitalCollator).to receive(:call)
         result = workflow_call
         expect(result.capital_subtotals.applicant_capital_subtotals.total_vehicle).to eq 500
-        expect(capital_summary.reload).to have_matching_attributes(capital_data.except(:total_vehicle))
+        expect(capital_summary.reload).to have_matching_attributes(capital_data.slice(:pensioner_capital_disregard))
       end
 
       it "calls CapitalAssessor and updates capital summary record with result" do
@@ -43,8 +43,6 @@ module Workflows
           pensioner_capital_disregard: 90_000,
           total_capital: 14_045.38,
           assessed_capital: 0.0,
-          lower_threshold: 3_000.0,
-          upper_threshold: 8_000.0,
           capital_contribution: 0.0,
         }
       end

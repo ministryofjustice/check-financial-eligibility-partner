@@ -2,19 +2,18 @@ class CapitalCollatorAndAssessor
   class << self
     def call(assessment)
       data = collate_applicant_capital(assessment)
-      assessment.capital_summary.update!(data.except(:total_vehicle))
+      assessment.capital_summary.update!(data.slice(:subject_matter_of_dispute_disregard, :pensioner_capital_disregard))
       if assessment.partner.present?
         partner_data = collate_partner_capital(assessment)
-        assessment.partner_capital_summary.update!(partner_data.except(:total_vehicle))
-        assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital +
-                                                                        assessment.partner_capital_summary.assessed_capital)
+        assessment.capital_summary.update!(combined_assessed_capital: data[:assessed_capital] + partner_data[:assessed_capital])
       else
-        assessment.capital_summary.update!(combined_assessed_capital: assessment.capital_summary.assessed_capital)
+        assessment.capital_summary.update!(combined_assessed_capital: data[:assessed_capital])
       end
-      Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
+      contribution = Assessors::CapitalAssessor.call(assessment.capital_summary, assessment.capital_summary.combined_assessed_capital)
       CapitalSubtotals.new(
-        applicant_capital_subtotals: PersonCapitalSubtotals.new(total_vehicle: data[:total_vehicle]),
-        partner_capital_subtotals: (PersonCapitalSubtotals.new(total_vehicle: partner_data[:total_vehicle]) if assessment.partner.present?),
+        applicant_capital_subtotals: PersonCapitalSubtotals.new(data),
+        partner_capital_subtotals: (PersonCapitalSubtotals.new(partner_data) if assessment.partner.present?),
+        capital_contribution: contribution,
       )
     end
 
