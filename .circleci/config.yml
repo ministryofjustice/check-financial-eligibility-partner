@@ -86,7 +86,7 @@ references:
   upgrade_packages: &upgrade_packages
     run:
       name: Update packages
-      command: sudo apt-get upgrade
+      command: sudo apt-get -y upgrade
   install_packages_for_testing: &install_packages_for_testing
     run:
       name: Install System packages needed for testing
