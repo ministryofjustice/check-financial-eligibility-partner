@@ -18,7 +18,7 @@ module Calculators
           # TODO: Stop persisting this
           state_benefit.update!(monthly_value:)
 
-          total += monthly_value.to_d unless state_benefit.exclude_from_gross_income
+          total += monthly_value unless state_benefit.exclude_from_gross_income
         end
         total
       end

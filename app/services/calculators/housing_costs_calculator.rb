@@ -14,7 +14,7 @@ module Calculators
 
     def net_housing_costs
       if housing_costs_cap_apply?
-        [gross_housing_costs, gross_cost_minus_housing_benefit, single_monthly_housing_costs_cap].min.to_f
+        [gross_housing_costs, gross_cost_minus_housing_benefit, single_monthly_housing_costs_cap].min
       elsif should_halve_full_cost_minus_benefits?
         (monthly_actual_housing_costs - monthly_housing_benefit) / 2
       else
@@ -33,7 +33,7 @@ module Calculators
         housing_benefit_payments = Calculators::MonthlyEquivalentCalculator.call(
           assessment_errors: @disposable_income_summary.assessment.assessment_errors,
           collection: housing_benefit_records,
-        ).to_d
+        )
         housing_benefit_payments + monthly_housing_benefit_regular_transactions
       end
     end
