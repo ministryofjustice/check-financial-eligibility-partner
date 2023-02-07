@@ -23,7 +23,7 @@ spec:
           - name: cull-stale-assessments
             image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
             imagePullPolicy: IfNotPresent
-            command: ['rake', "stale_assessments:cull"]
+            command: ['bundle', 'exec', 'rake', "stale_assessments:cull"]
 {{ include "app.envs" . | nindent 12 }}
             resources:
               limits:
