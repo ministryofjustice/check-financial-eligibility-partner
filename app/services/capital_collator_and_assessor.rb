@@ -1,17 +1,17 @@
 class CapitalCollatorAndAssessor
   class << self
     def call(assessment)
-      data = collate_applicant_capital(assessment)
+      applicant_subtotals = collate_applicant_capital(assessment)
       if assessment.partner.present?
-        partner_data = collate_partner_capital(assessment)
-        combined_assessed_capital = data[:assessed_capital] + partner_data[:assessed_capital]
+        partner_subtotals = collate_partner_capital(assessment)
+        combined_assessed_capital = applicant_subtotals.assessed_capital + partner_subtotals.assessed_capital
       else
-        combined_assessed_capital = data[:assessed_capital]
+        combined_assessed_capital = applicant_subtotals.assessed_capital
       end
       capital_contribution = Assessors::CapitalAssessor.call(assessment.capital_summary, combined_assessed_capital)
       CapitalSubtotals.new(
-        applicant_capital_subtotals: PersonCapitalSubtotals.new(data),
-        partner_capital_subtotals: (PersonCapitalSubtotals.new(partner_data) if assessment.partner.present?),
+        applicant_capital_subtotals: applicant_subtotals,
+        partner_capital_subtotals: partner_subtotals,
         capital_contribution:,
         combined_assessed_capital:,
       )

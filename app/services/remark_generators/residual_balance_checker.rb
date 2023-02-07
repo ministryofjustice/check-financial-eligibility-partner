@@ -22,7 +22,7 @@ module RemarkGenerators
     end
 
     def capital_exceeds_lower_threshold?
-      @assessed_capital.to_f > lower_capital_threshold
+      @assessed_capital > lower_capital_threshold
     end
 
     def populate_remarks

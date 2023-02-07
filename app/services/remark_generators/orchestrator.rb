@@ -62,7 +62,7 @@ module RemarkGenerators
     end
 
     def check_residual_balances
-      ResidualBalanceChecker.call(@assessment, @assessed_capital)
+      ResidualBalanceChecker.call(@assessment, @assessed_capital) if @assessed_capital
     end
 
     def check_flags
