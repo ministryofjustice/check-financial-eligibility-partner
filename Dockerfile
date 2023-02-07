@@ -1,45 +1,24 @@
-FROM ruby:3.1.2-alpine3.16
-MAINTAINER apply for legal aid team
+FROM ruby:3.1.3-alpine
 
-ENV RAILS_ENV production
+RUN addgroup -g 1000 -S appgroup && \
+    adduser -u 1000 -S appuser -G appgroup
 
-RUN set -ex
+RUN apk update \
+ && apk add --no-cache  \
+    build-base  \
+    ruby-dev
 
-RUN apk --no-cache add --virtual build-dependencies \
-                    build-base \
-                    postgresql-dev \
-&& apk --no-cache add postgresql-client
+WORKDIR /app
 
-RUN mkdir /myapp
-WORKDIR /myapp
+COPY Gemfile Gemfile.lock config.ru ./
 
-RUN adduser --disabled-password apply -u 1001
+RUN bundle install
 
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
+COPY app.rb ./
 
-RUN gem update --system
-RUN bundle config --local without test:development && bundle install
+RUN chown -R appuser:appgroup /app
 
-COPY . /myapp
+USER 1000
 
-RUN apk del build-dependencies
-
-EXPOSE 3000
-
-RUN chown -R apply:apply /myapp
-
-# expect ping environment variables
-ARG BUILD_DATE
-ARG BUILD_TAG
-ARG APP_BRANCH
-# set ping environment variables
-ENV BUILD_DATE=${BUILD_DATE}
-ENV BUILD_TAG=${BUILD_TAG}
-ENV APP_BRANCH=${APP_BRANCH}
-# allow public files to be served
-ENV RAILS_SERVE_STATIC_FILES true
-
-USER 1001
-
-CMD ["docker/run"]
+EXPOSE 4567/TCP
+CMD [ "bundle", "exec", "rackup", "--host", "0.0.0.0", "-p", "4567" ]
