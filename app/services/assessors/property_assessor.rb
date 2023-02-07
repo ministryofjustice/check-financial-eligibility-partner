@@ -16,6 +16,7 @@ module Assessors
         main_home_equity_disregard = calculate_main_home_disregard(property, submission_date)
         assessed_equity = calculate_assessed_equity(net_equity, main_home_equity_disregard)
         result = Result.new(transaction_allowance:, allowable_outstanding_mortgage:, net_value:, net_equity:, main_home_equity_disregard:, assessed_equity:)
+                       .freeze
         save!(property, result)
         result
       end

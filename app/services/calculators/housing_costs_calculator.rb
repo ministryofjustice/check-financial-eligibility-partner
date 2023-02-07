@@ -33,7 +33,7 @@ module Calculators
         housing_benefit_payments = Calculators::MonthlyEquivalentCalculator.call(
           assessment_errors: @disposable_income_summary.assessment.assessment_errors,
           collection: housing_benefit_records,
-        )
+        ).to_d
         housing_benefit_payments + monthly_housing_benefit_regular_transactions
       end
     end
