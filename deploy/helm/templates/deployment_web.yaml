@@ -19,7 +19,7 @@ spec:
         app: {{ template "app.name" . }}
         release: {{ .Release.Name }}
     spec:
-      terminationGracePeriodSeconds: 20
+      terminationGracePeriodSeconds: 40
       containers:
         - name: api
           image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
