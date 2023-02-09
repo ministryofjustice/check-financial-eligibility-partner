@@ -3,10 +3,11 @@ module Decorators
     class GrossIncomeDecorator
       include Transactions
 
-      def initialize(summary, employments)
+      def initialize(summary, employments, subtotals)
         @summary = summary
         @employments = employments
         @categories = income_categories_excluding_benefits
+        @subtotals = subtotals
       end
 
       def as_json
@@ -60,8 +61,8 @@ module Decorators
         {
           monthly_equivalents:
             {
-              student_loan: summary.monthly_student_loan.to_f,
-              unspecified_source: summary.monthly_unspecified_source.to_f,
+              student_loan: @subtotals.monthly_student_loan.to_f,
+              unspecified_source: @subtotals.monthly_unspecified_source.to_f,
             },
         }
       end
@@ -78,18 +79,18 @@ module Decorators
 
       def transactions(source)
         {
-          friends_or_family: summary.__send__("friends_or_family_#{source}").to_f,
-          maintenance_in: summary.__send__("maintenance_in_#{source}").to_f,
-          property_or_lodger: summary.__send__("property_or_lodger_#{source}").to_f,
-          pension: summary.__send__("pension_#{source}").to_f,
+          friends_or_family: @subtotals.monthly_regular_incomes(source, :friends_or_family).to_f,
+          maintenance_in: @subtotals.monthly_regular_incomes(source, :maintenance_in).to_f,
+          property_or_lodger: @subtotals.monthly_regular_incomes(source, :property_or_lodger).to_f,
+          pension: @subtotals.monthly_regular_incomes(source, :pension).to_f,
         }
       end
 
       def state_benefits
         {
           monthly_equivalents: {
-            all_sources: summary.benefits_all_sources.to_f,
-            cash_transactions: summary.benefits_cash.to_f,
+            all_sources: @subtotals.monthly_regular_incomes(:all_sources, :benefits).to_f,
+            cash_transactions: @subtotals.monthly_regular_incomes(:cash, :benefits).to_f,
             bank_transactions: summary.state_benefits.map { |sb| StateBenefitDecorator.new(sb).as_json },
           },
         }
