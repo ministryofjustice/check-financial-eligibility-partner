@@ -1,4 +1,4 @@
-FROM ruby:3.2.0-alpine3.17 as builder
+FROM ruby:3.2.1-alpine3.16 as builder
 
 ENV RAILS_ENV production
 
