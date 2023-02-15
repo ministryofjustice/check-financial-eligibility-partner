@@ -19,7 +19,13 @@ module Assessors
   private
 
     def result
+      return "eligible" if applicant_receives_relevant_asylum_support?
+
       passported? ? passported_assessment : gross_income_assessment
+    end
+
+    def applicant_receives_relevant_asylum_support?
+      @proceeding_type_code.to_sym.in?(CFEConstants::IMMIGRATION_AND_ASYLUM_PROCEEDING_TYPE_CCMS_CODES) && applicant.receives_asylum_support
     end
 
     def passported?
