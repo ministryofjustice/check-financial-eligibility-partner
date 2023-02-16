@@ -89,23 +89,25 @@ module Workflows
 
       context "with proceeding types" do
         it "Populates proceeding types with thresholds" do
+          output = CalculationOutput.new
           expect(Utilities::ProceedingTypeThresholdPopulator).to receive(:call).with(assessment)
 
           allow(Creators::EligibilitiesCreator).to receive(:call).with(assessment)
-          allow(NonPassportedWorkflow).to receive(:call).with(assessment).and_return(CalculationOutput.new)
+          allow(NonPassportedWorkflow).to receive(:call).with(assessment).and_return(output)
           allow(Assessors::MainAssessor).to receive(:call).with(assessment)
-          allow(RemarkGenerators::Orchestrator).to receive(:call).with(assessment, 0)
+          allow(RemarkGenerators::Orchestrator).to receive(:call).with(assessment, 0, output.disposable_income_subtotals.applicant_disposable_income_subtotals)
 
           workflow_call
         end
 
         it "creates the eligibility records" do
+          output = CalculationOutput.new
           expect(Creators::EligibilitiesCreator).to receive(:call).with(assessment)
 
           allow(Utilities::ProceedingTypeThresholdPopulator).to receive(:call).with(assessment)
-          allow(NonPassportedWorkflow).to receive(:call).with(assessment).and_return(CalculationOutput.new)
+          allow(NonPassportedWorkflow).to receive(:call).with(assessment).and_return(output)
           allow(Assessors::MainAssessor).to receive(:call).with(assessment)
-          allow(RemarkGenerators::Orchestrator).to receive(:call).with(assessment, 0)
+          allow(RemarkGenerators::Orchestrator).to receive(:call).with(assessment, 0, output.disposable_income_subtotals.applicant_disposable_income_subtotals)
 
           workflow_call
         end

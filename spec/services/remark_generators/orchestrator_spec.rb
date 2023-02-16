@@ -12,6 +12,7 @@ module RemarkGenerators
     let(:housing_outgoings) { assessment.disposable_income_summary.housing_cost_outgoings }
     let(:legal_aid_outgoings) { assessment.disposable_income_summary.legal_aid_outgoings }
     let(:employment_payments) { assessment.employments.first.employment_payments }
+    let(:disposable_income_subtotals) { :disposable_income_subtotals }
 
     before do
       create(:disposable_income_summary, :with_everything, assessment:)
@@ -23,21 +24,21 @@ module RemarkGenerators
       expect(MultiBenefitChecker).to receive(:call).with(assessment, state_benefit_payments)
       expect(AmountVariationChecker).to receive(:call).with(assessment, state_benefit_payments)
       expect(AmountVariationChecker).to receive(:call).with(assessment, other_income_payments)
-      expect(AmountVariationChecker).to receive(:call).with(assessment, childcare_outgoings)
-      expect(AmountVariationChecker).to receive(:call).with(assessment, maintenance_outgoings)
-      expect(AmountVariationChecker).to receive(:call).with(assessment, housing_outgoings)
-      expect(AmountVariationChecker).to receive(:call).with(assessment, legal_aid_outgoings)
+      expect(AmountVariationChecker).to receive(:call).with(assessment, childcare_outgoings, disposable_income_subtotals)
+      expect(AmountVariationChecker).to receive(:call).with(assessment, maintenance_outgoings, disposable_income_subtotals)
+      expect(AmountVariationChecker).to receive(:call).with(assessment, housing_outgoings, disposable_income_subtotals)
+      expect(AmountVariationChecker).to receive(:call).with(assessment, legal_aid_outgoings, disposable_income_subtotals)
       expect(FrequencyChecker).to receive(:call).with(assessment, state_benefit_payments)
       expect(FrequencyChecker).to receive(:call).with(assessment, other_income_payments)
-      expect(FrequencyChecker).to receive(:call).with(assessment, childcare_outgoings)
-      expect(FrequencyChecker).to receive(:call).with(assessment, maintenance_outgoings)
-      expect(FrequencyChecker).to receive(:call).with(assessment, housing_outgoings)
-      expect(FrequencyChecker).to receive(:call).with(assessment, legal_aid_outgoings)
-      expect(FrequencyChecker).to receive(:call).with(assessment, employment_payments, :date)
+      expect(FrequencyChecker).to receive(:call).with(assessment, childcare_outgoings, disposable_income_subtotals)
+      expect(FrequencyChecker).to receive(:call).with(assessment, maintenance_outgoings, disposable_income_subtotals)
+      expect(FrequencyChecker).to receive(:call).with(assessment, housing_outgoings, disposable_income_subtotals)
+      expect(FrequencyChecker).to receive(:call).with(assessment, legal_aid_outgoings, disposable_income_subtotals)
+      expect(FrequencyChecker).to receive(:call).with(assessment, employment_payments, nil, date_attribute: :date)
 
       expect(ResidualBalanceChecker).to receive(:call).with(assessment, 0)
 
-      described_class.call(assessment, 0)
+      described_class.call(assessment, 0, disposable_income_subtotals)
     end
   end
 end

@@ -91,25 +91,35 @@ module RemarkGenerators
             ]
           end
 
+          let(:disposable_income_subtotals) do
+            PersonDisposableIncomeSubtotals.new(
+              category_subtotals: [
+                TransactionCategorySubtotals.new(category: :child_care, bank: recorded_child_care_amount),
+              ],
+            )
+          end
+
           context "if the childcare costs are allowed as an outgoing" do
-            before { disposable_income_summary.child_care_bank = 1 }
+            let(:recorded_child_care_amount) { 1 }
 
             it "adds the remark" do
               expect_any_instance_of(Remarks).to receive(:add).with(:outgoings_childcare, :unknown_frequency, collection.map(&:client_id))
-              described_class.call(assessment, collection)
+              described_class.call(assessment, collection, disposable_income_subtotals)
             end
 
             it "stores the changed the remarks class on the assessment" do
               original_remarks = assessment.remarks.as_json
-              described_class.call(assessment, collection)
+              described_class.call(assessment, collection, disposable_income_subtotals)
               expect(assessment.reload.remarks.as_json).not_to eq original_remarks
             end
           end
 
           context "if the childcare costs are not allowed as an outgoing" do
+            let(:recorded_child_care_amount) { 0 }
+
             it "does not update the remarks class" do
               original_remarks = assessment.remarks.as_json
-              described_class.call(assessment, collection)
+              described_class.call(assessment, collection, disposable_income_subtotals)
               expect(assessment.reload.remarks.as_json).to eq original_remarks
             end
           end
@@ -129,7 +139,7 @@ module RemarkGenerators
 
         it "does not update the remarks class" do
           original_remarks = assessment.remarks.as_json
-          described_class.call(assessment, collection, "date")
+          described_class.call(assessment, collection, date_attribute: "date")
           expect(assessment.reload.remarks.as_json).to eq original_remarks
         end
       end
@@ -139,12 +149,12 @@ module RemarkGenerators
 
         it "adds the remark" do
           expect_any_instance_of(Remarks).to receive(:add).with(:employment_payment, :unknown_frequency, collection.map(&:client_id))
-          described_class.call(assessment, collection, "date")
+          described_class.call(assessment, collection, date_attribute: "date")
         end
 
         it "stores the changed the remarks class on the assessment" do
           original_remarks = assessment.remarks.as_json
-          described_class.call(assessment, collection, "date")
+          described_class.call(assessment, collection, date_attribute: "date")
           expect(assessment.reload.remarks.as_json).not_to eq original_remarks
         end
       end

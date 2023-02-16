@@ -3,24 +3,21 @@ module Decorators
     class DisposableIncomeDecorator
       attr_reader :record, :categories
 
-      def initialize(summary)
+      def initialize(summary, person_subtotals)
         @summary = summary
+        @person_subtotals = person_subtotals
         @categories = CFEConstants::VALID_OUTGOING_CATEGORIES.map(&:to_sym)
       end
 
       def as_json
-        payload unless @summary.nil?
-      end
-
-    private
-
-      def payload
         {
           monthly_equivalents:,
           childcare_allowance:,
           deductions:,
         }
       end
+
+    private
 
       def monthly_equivalents
         {
@@ -32,20 +29,20 @@ module Decorators
 
       def transactions(source)
         {
-          child_care: @summary.__send__("child_care_#{source}").to_f,
-          rent_or_mortgage: @summary.__send__("rent_or_mortgage_#{source}").to_f,
-          maintenance_out: @summary.__send__("maintenance_out_#{source}").to_f,
-          legal_aid: @summary.__send__("legal_aid_#{source}").to_f,
+          child_care: @person_subtotals.categorised_outgoings(source, :child_care).to_f,
+          rent_or_mortgage: @person_subtotals.categorised_outgoings(source, :rent_or_mortgage).to_f,
+          maintenance_out: @person_subtotals.categorised_outgoings(source, :maintenance_out).to_f,
+          legal_aid: @person_subtotals.categorised_outgoings(source, :legal_aid).to_f,
         }
       end
 
       def childcare_allowance
-        @summary.child_care_all_sources.to_f
+        @person_subtotals.categorised_outgoings(:all_sources, :child_care).to_f
       end
 
       def deductions
         {
-          dependants_allowance: @summary.dependant_allowance.to_f,
+          dependants_allowance: @person_subtotals.dependant_allowance.to_f,
           disregarded_state_benefits: Calculators::DisregardedStateBenefitsCalculator.call(@summary).to_f,
         }
       end

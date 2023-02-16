@@ -2,27 +2,21 @@ module Calculators
   class HousingCostsCalculator
     delegate :housing_cost_outgoings, to: :@disposable_income_summary
 
-    def initialize(disposable_income_summary:, gross_income_summary:, submission_date:, person:)
+    def initialize(disposable_income_summary:, submission_date:, person:, gross_housing_costs:)
       @disposable_income_summary = disposable_income_summary
-      @gross_income_summary = gross_income_summary
       @submission_date = submission_date
       @person = person
+      @gross_housing_costs = gross_housing_costs
     end
 
     def net_housing_costs
       if housing_costs_cap_apply?
-        [gross_housing_costs, gross_cost_minus_housing_benefit, single_monthly_housing_costs_cap].min
+        [@gross_housing_costs, gross_cost_minus_housing_benefit, single_monthly_housing_costs_cap].min
       elsif should_halve_full_cost_minus_benefits?
-        (monthly_actual_housing_costs - monthly_housing_benefit) / 2
+        gross_cost_minus_housing_benefit / 2
       else
         gross_cost_minus_housing_benefit
       end
-    end
-
-    def gross_housing_costs
-      @gross_housing_costs ||= gross_housing_costs_bank +
-        gross_housing_costs_regular_transactions +
-        gross_housing_costs_cash
     end
 
     def monthly_housing_benefit
@@ -37,51 +31,16 @@ module Calculators
 
   private
 
-    def gross_housing_costs_cash
-      Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :debit, category: :rent_or_mortgage)
-    end
-
-    def gross_housing_costs_bank
-      monthly_amount = Calculators::MonthlyEquivalentCalculator.call(
-        assessment_errors: @disposable_income_summary.assessment.assessment_errors,
-        collection: @disposable_income_summary.housing_cost_outgoings,
-        amount_method: :allowable_amount,
-      )
-
-      # TODO: Stop persisting this to DB
-      @disposable_income_summary.update!(rent_or_mortgage_bank: monthly_amount)
-
-      monthly_amount
-    end
-
-    def gross_housing_costs_regular_transactions
-      Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :debit, category: :rent_or_mortgage)
-    end
-
     def monthly_housing_benefit_regular_transactions
-      Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :credit, category: :housing_benefit)
-    end
-
-    # TODO: regular transactions may need accounting for here at some point
-    # but at time of writing they do not include sub-types of housing costs,
-    # specifically "board and lodging", so this should never get called.
-    def monthly_actual_housing_costs
-      @monthly_actual_housing_costs ||= calculate_actual_housing_costs + gross_housing_costs_cash
-    end
-
-    def calculate_actual_housing_costs
-      Calculators::MonthlyEquivalentCalculator.call(
-        assessment_errors: @disposable_income_summary.assessment.assessment_errors,
-        collection: housing_cost_outgoings,
-      )
+      Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary: @person.gross_income_summary, operation: :credit, category: :housing_benefit)
     end
 
     def gross_cost_minus_housing_benefit
-      gross_housing_costs - monthly_housing_benefit
+      @gross_housing_costs - monthly_housing_benefit
     end
 
     def housing_benefit_records
-      @gross_income_summary.housing_benefit_payments
+      @person.housing_benefit_payments
     end
 
     def all_board_and_lodging?
@@ -98,7 +57,7 @@ module Calculators
     end
 
     def receiving_housing_benefits?
-      @gross_income_summary.housing_benefit_payments.present? ||
+      @person.housing_benefit_payments.present? ||
         monthly_housing_benefit_regular_transactions.positive?
     end
 

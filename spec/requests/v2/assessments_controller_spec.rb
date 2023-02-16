@@ -6,7 +6,7 @@ module V2
       let(:headers) { { "CONTENT_TYPE" => "application/json", "Accept" => "application/json" } }
       let(:assessment) { parsed_response.fetch(:assessment).except(:id) }
       let(:employed) { false }
-      let(:current_date) { Date.new(2022, 6, 6) }
+      let(:current_date) { Date.new(2022, 6, 7) }
       let(:default_params) do
         {
           assessment: { submission_date: current_date.to_s },

@@ -18,16 +18,13 @@ module Decorators
           overall_result: {
             result: @assessment.assessment_result,
             capital_contribution: @calculation_output.capital_subtotals.capital_contribution.to_f,
-            income_contribution: disposable_income_summary.income_contribution.to_f,
+            income_contribution: @calculation_output.disposable_income_subtotals.monthly_income_contribution.to_f,
             proceeding_types: ProceedingTypesResultDecorator.new(assessment.eligibilities, assessment.proceeding_types).as_json,
           },
           gross_income: GrossIncomeResultDecorator.new(gross_income_summary,
                                                        @calculation_output.gross_income_subtotals.applicant_gross_income_subtotals,
                                                        @calculation_output.gross_income_subtotals.combined_monthly_gross_income.to_f).as_json,
-          disposable_income: DisposableIncomeResultDecorator.new(disposable_income_summary,
-                                                                 gross_income_summary,
-                                                                 @calculation_output.gross_income_subtotals.applicant_gross_income_subtotals.employment_income_subtotals,
-                                                                 partner_present: assessment.partner.present?).as_json,
+          disposable_income:,
           capital: CapitalResultDecorator.new(capital_summary,
                                               @calculation_output.capital_subtotals.applicant_capital_subtotals,
                                               @calculation_output.capital_subtotals.capital_contribution.to_f,
@@ -45,11 +42,22 @@ module Decorators
                                        @calculation_output.gross_income_subtotals.partner_gross_income_subtotals).as_json
       end
 
+      def disposable_income
+        DisposableIncomeResultDecorator.new(disposable_income_summary,
+                                            @calculation_output.gross_income_subtotals.applicant_gross_income_subtotals.employment_income_subtotals,
+                                            @calculation_output.disposable_income_subtotals.applicant_disposable_income_subtotals,
+                                            combined_outgoings: @calculation_output.disposable_income_subtotals.combined_monthly_outgoings,
+                                            combined_disposable_income: @calculation_output.disposable_income_subtotals.combined_monthly_disposable_income,
+                                            income_contribution: @calculation_output.disposable_income_subtotals.monthly_income_contribution).as_json
+      end
+
       def partner_disposable_income
         DisposableIncomeResultDecorator.new(assessment.partner_disposable_income_summary,
-                                            assessment.partner_gross_income_summary,
                                             @calculation_output.gross_income_subtotals.partner_gross_income_subtotals.employment_income_subtotals,
-                                            partner_present: true).as_json
+                                            @calculation_output.disposable_income_subtotals.partner_disposable_income_subtotals,
+                                            combined_outgoings: @calculation_output.disposable_income_subtotals.combined_monthly_outgoings,
+                                            combined_disposable_income: @calculation_output.disposable_income_subtotals.combined_monthly_disposable_income,
+                                            income_contribution: @calculation_output.disposable_income_subtotals.monthly_income_contribution).as_json
       end
 
       def partner_capital

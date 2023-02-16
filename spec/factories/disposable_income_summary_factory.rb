@@ -1,16 +1,6 @@
 FactoryBot.define do
   factory :disposable_income_summary do
     assessment
-    child_care_bank { 0.0 }
-    maintenance_out_bank { 0.0 }
-    legal_aid_bank { 0.0 }
-    dependant_allowance { 0.0 }
-    gross_housing_costs { 0.0 }
-    rent_or_mortgage_bank { 0.0 }
-    net_housing_costs { 0.0 }
-    housing_benefit { 0.0 }
-    total_outgoings_and_allowances { 0.0 }
-    total_disposable_income { 0.0 }
 
     trait :with_everything do
       after(:create) do |rec|

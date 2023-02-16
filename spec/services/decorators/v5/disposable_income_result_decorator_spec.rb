@@ -6,21 +6,8 @@ module Decorators
       let(:unlimited) { 999_999_999_999.0 }
       let(:assessment) { create :assessment, :with_gross_income_summary, proceedings: proceeding_hash }
       let(:summary) do
-        create :disposable_income_summary,
-               assessment:,
-               dependant_allowance: 220.21,
-               gross_housing_costs: 990.42,
-               housing_benefit: 440.21,
-               net_housing_costs: 550.21,
-               maintenance_out_all_sources: 330.21,
-               total_outgoings_and_allowances: 660.21,
-               total_disposable_income: 732.55,
-               income_contribution: 75,
-               combined_total_disposable_income: 900.0,
-               combined_total_outgoings_and_allowances: 400.32
+        create :disposable_income_summary, assessment:
       end
-      let(:employment1) { create :employment, :with_monthly_payments, assessment: }
-      let(:employment2) { create :employment, :with_monthly_payments, assessment: }
       let(:codes) { pt_results.keys }
       let(:pt_results) do
         {
@@ -31,7 +18,6 @@ module Decorators
         }
       end
       let(:proceeding_hash) { [%w[DA003 A], %w[DA005 A], %w[SE003 A], %w[SE014 A]] }
-      let(:partner_present) { true }
       let(:expected_result) do
         {
           dependant_allowance: 220.21,
@@ -87,9 +73,47 @@ module Decorators
         }
       end
 
-      let(:employment_income_subtotals) { EmploymentIncomeSubtotals.new(gross_employment_income: 0, benefits_in_kind: 0) }
+      let(:employment_income_subtotals) do
+        EmploymentIncomeSubtotals.new(
+          benefits_in_kind: 0.0,
+          fixed_employment_allowance: -45.0,
+          gross_employment_income: 0.0,
+          employment_income_deductions: 0.0,
+          national_insurance: 0.0,
+          net_employment_income: -45.0,
+          tax: 0.0,
+        )
+      end
 
-      subject(:decorator) { described_class.new(summary, assessment.gross_income_summary, employment_income_subtotals, partner_present:).as_json }
+      let(:person_disposable_income_subtotals) do
+        PersonDisposableIncomeSubtotals.new(
+          category_subtotals: [
+            TransactionCategorySubtotals.new(category: :maintenance_out, bank: 330.21, cash: 0, regular: 0),
+          ],
+          dependant_allowance: 220.21,
+          housing_costs_subtotals: HousingCostsSubtotals.new(
+            housing_benefit: 440.21,
+            gross_housing_costs: 990.42,
+            net_housing_costs: 550.21,
+          ),
+          partner_allowance: 191.41,
+          total_monthly_outgoings: 660.21,
+          total_monthly_disposable_income: 732.55,
+        )
+      end
+
+      let(:combined_outgoings) { 400.32 }
+      let(:combined_disposable_income) { 900.0 }
+      let(:income_contribution) { 75 }
+
+      subject(:decorator) do
+        described_class.new(summary,
+                            employment_income_subtotals,
+                            person_disposable_income_subtotals,
+                            combined_outgoings:,
+                            combined_disposable_income:,
+                            income_contribution:).as_json
+      end
 
       before do
         pt_results.each do |ptc, details|
@@ -106,15 +130,6 @@ module Decorators
 
       describe "#as_json" do
         it "returns the expected structure" do
-          employment1
-          employment2
-          result = Calculators::MultipleEmploymentsCalculator.call(assessment:,
-                                                                   employments: assessment.employments)
-          assessment.disposable_income_summary.update!(employment_income_deductions: result.employment_income_deductions,
-                                                       fixed_employment_allowance: result.fixed_employment_allowance,
-                                                       tax: result.tax,
-                                                       national_insurance: result.national_insurance)
-
           expect(decorator).to eq expected_result
         end
       end

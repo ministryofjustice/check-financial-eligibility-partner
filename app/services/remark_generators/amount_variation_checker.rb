@@ -1,12 +1,14 @@
 module RemarkGenerators
   class AmountVariationChecker < BaseChecker
-    include Exemptable
-
     def call
       populate_remarks unless unique_amounts || exempt_from_checking
     end
 
   private
+
+    def exempt_from_checking
+      Utilities::ChildcareExemptionDetector.call(record_type, disposable_income_subtotals)
+    end
 
     def unique_amounts
       @collection.map(&:amount).uniq.size == 1

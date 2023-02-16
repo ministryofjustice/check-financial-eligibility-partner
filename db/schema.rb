@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_25_142836) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_26_111814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -110,37 +110,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_25_142836) do
 
   create_table "disposable_income_summaries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "assessment_id", null: false
-    t.decimal "dependant_allowance", default: "0.0", null: false
-    t.decimal "gross_housing_costs", default: "0.0", null: false
-    t.decimal "total_outgoings_and_allowances", default: "0.0", null: false
-    t.decimal "total_disposable_income", default: "0.0", null: false
-    t.decimal "lower_threshold", default: "0.0", null: false
-    t.decimal "upper_threshold", default: "0.0", null: false
-    t.string "assessment_result", default: "pending", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "net_housing_costs", default: "0.0"
-    t.decimal "housing_benefit", default: "0.0"
-    t.decimal "income_contribution", default: "0.0"
-    t.decimal "child_care_all_sources", default: "0.0"
-    t.decimal "maintenance_out_all_sources", default: "0.0"
-    t.decimal "rent_or_mortgage_all_sources", default: "0.0"
-    t.decimal "legal_aid_all_sources", default: "0.0"
-    t.decimal "child_care_bank", default: "0.0"
-    t.decimal "maintenance_out_bank", default: "0.0"
-    t.decimal "rent_or_mortgage_bank", default: "0.0"
-    t.decimal "legal_aid_bank", default: "0.0"
-    t.decimal "child_care_cash", default: "0.0"
-    t.decimal "maintenance_out_cash", default: "0.0"
-    t.decimal "rent_or_mortgage_cash", default: "0.0"
-    t.decimal "legal_aid_cash", default: "0.0"
-    t.decimal "employment_income_deductions", default: "0.0", null: false
-    t.decimal "fixed_employment_allowance", default: "0.0", null: false
-    t.decimal "tax", default: "0.0", null: false
-    t.decimal "national_insurance", default: "0.0", null: false
     t.string "type", default: "ApplicantDisposableIncomeSummary"
-    t.decimal "combined_total_disposable_income"
-    t.decimal "combined_total_outgoings_and_allowances"
     t.index ["assessment_id"], name: "index_disposable_income_summaries_on_assessment_id"
   end
 

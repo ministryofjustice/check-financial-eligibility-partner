@@ -1,5 +1,10 @@
 module Workflows
   class NonPassportedWorkflow
+    DisposableIncomeData = Data.define(:applicant_disposable_income_subtotals,
+                                       :partner_disposable_income_subtotals,
+                                       :combined_monthly_outgoings,
+                                       :combined_monthly_disposable_income)
+
     class << self
       def call(assessment)
         new(assessment).call
@@ -16,11 +21,11 @@ module Workflows
       gross_income_subtotals = collate_and_assess_gross_income
       return CalculationOutput.new(gross_income_subtotals:) if assessment.gross_income_summary.ineligible?
 
-      disposable_income_assessment(gross_income_subtotals)
-      return CalculationOutput.new(gross_income_subtotals:) if assessment.disposable_income_summary.ineligible?
+      disposable_income_subtotals = collate_and_assess_disposable_income(gross_income_subtotals)
+      return CalculationOutput.new(gross_income_subtotals:, disposable_income_subtotals:) if assessment.disposable_income_summary.ineligible?
 
-      capital_subtotals = collate_and_assess_capital
-      CalculationOutput.new(capital_subtotals:, gross_income_subtotals:)
+      capital_subtotals = collate_and_assess_capital(disposable_income_subtotals.combined_monthly_disposable_income)
+      CalculationOutput.new(capital_subtotals:, gross_income_subtotals:, disposable_income_subtotals:)
     end
 
   private
@@ -31,13 +36,11 @@ module Workflows
       applicant_gross_income_subtotals = Collators::GrossIncomeCollator.call(assessment:,
                                                                              submission_date: assessment.submission_date,
                                                                              employments: assessment.employments,
-                                                                             disposable_income_summary: assessment.disposable_income_summary,
                                                                              gross_income_summary: assessment.gross_income_summary)
       if assessment.partner.present?
         partner_gross_income_subtotals = Collators::GrossIncomeCollator.call(assessment:,
                                                                              submission_date: assessment.submission_date,
                                                                              employments: assessment.partner_employments,
-                                                                             disposable_income_summary: assessment.partner_disposable_income_summary,
                                                                              gross_income_summary: assessment.partner_gross_income_summary)
         combined_monthly_gross_income = applicant_gross_income_subtotals.total_gross_income +
           partner_gross_income_subtotals.total_gross_income
@@ -57,75 +60,69 @@ module Workflows
       )
     end
 
-    # TODO: make the Collators::DisposableIncomeCollator increment/sum to existing values so order of "collation" becomes unimportant
-    def disposable_income_assessment(gross_income_subtotals)
-      if assessment.partner.present?
-        applicant = PersonWrapper.new person: assessment.applicant, is_single: false,
-                                      dependants: assessment.dependants, gross_income_summary: assessment.gross_income_summary
-        partner = PersonWrapper.new person: assessment.partner, is_single: false,
-                                    dependants: assessment.partner_dependants, gross_income_summary: assessment.partner_gross_income_summary
-        eligible_for_childcare = calculate_childcare_eligibility(applicant, partner)
-        Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
-                                          person: applicant,
-                                          gross_income_summary: assessment.gross_income_summary.freeze,
-                                          disposable_income_summary: assessment.disposable_income_summary,
-                                          eligible_for_childcare:,
-                                          allow_negative_net: true)
-        Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
-                                          person: partner,
-                                          gross_income_summary: assessment.partner_gross_income_summary.freeze,
-                                          disposable_income_summary: assessment.partner_disposable_income_summary,
-                                          eligible_for_childcare:,
-                                          allow_negative_net: true)
+    def collate_and_assess_disposable_income(gross_income_subtotals)
+      subtotals = if assessment.partner.present?
+                    disposable_income_subtotals_with_partner(gross_income_subtotals)
+                  else
+                    disposable_income_subtotals_without_partner(gross_income_subtotals)
+                  end
 
-        Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.disposable_income_summary,
-                                                 partner_allowance:,
-                                                 total_gross_income: gross_income_subtotals.applicant_gross_income_subtotals.total_gross_income)
-        Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.partner_gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.partner_disposable_income_summary,
-                                                 partner_allowance: 0,
-                                                 total_gross_income: gross_income_subtotals.partner_gross_income_subtotals.total_gross_income)
-
-        Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.disposable_income_summary,
-                                                 eligible_for_childcare:)
-        Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.partner_gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.partner_disposable_income_summary,
-                                                 eligible_for_childcare:)
-
-        assessment.disposable_income_summary.update!(
-          combined_total_disposable_income: assessment.disposable_income_summary.total_disposable_income +
-                                              assessment.partner_disposable_income_summary.total_disposable_income,
-          combined_total_outgoings_and_allowances: assessment.disposable_income_summary.total_outgoings_and_allowances +
-                                                     assessment.partner_disposable_income_summary.total_outgoings_and_allowances,
-        )
-      else
-        applicant = PersonWrapper.new person: assessment.applicant, is_single: true,
-                                      dependants: assessment.dependants, gross_income_summary: assessment.gross_income_summary
-        eligible_for_childcare = calculate_childcare_eligibility(applicant)
-        Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
-                                          person: applicant,
-                                          gross_income_summary: assessment.gross_income_summary.freeze,
-                                          disposable_income_summary: assessment.disposable_income_summary,
-                                          eligible_for_childcare:,
-                                          allow_negative_net: false)
-        Collators::DisposableIncomeCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.disposable_income_summary,
-                                                 partner_allowance: 0,
-                                                 total_gross_income: gross_income_subtotals.applicant_gross_income_subtotals.total_gross_income)
-        Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
-                                                 disposable_income_summary: assessment.disposable_income_summary,
-                                                 eligible_for_childcare:)
-        assessment.disposable_income_summary.update!(combined_total_disposable_income: assessment.disposable_income_summary.total_disposable_income,
-                                                     combined_total_outgoings_and_allowances: assessment.disposable_income_summary.total_outgoings_and_allowances)
-      end
-      Assessors::DisposableIncomeAssessor.call(disposable_income_summary: assessment.disposable_income_summary,
-                                               total_disposable_income: assessment.disposable_income_summary.combined_total_disposable_income)
+      DisposableIncomeSubtotals.new applicant_disposable_income_subtotals: subtotals.applicant_disposable_income_subtotals,
+                                    partner_disposable_income_subtotals: subtotals.partner_disposable_income_subtotals,
+                                    combined_monthly_outgoings: subtotals.combined_monthly_outgoings,
+                                    combined_monthly_disposable_income: subtotals.combined_monthly_disposable_income,
+                                    monthly_income_contribution: Assessors::DisposableIncomeAssessor.call(disposable_income_summary: assessment.disposable_income_summary,
+                                                                                                          total_disposable_income: subtotals.combined_monthly_disposable_income)
     end
 
-    def collate_and_assess_capital
-      CapitalCollatorAndAssessor.call assessment
+    def disposable_income_subtotals_with_partner(gross_income_subtotals)
+      applicant = PersonWrapper.new person: assessment.applicant, is_single: false,
+                                    dependants: assessment.dependants, gross_income_summary: assessment.gross_income_summary
+      partner = PersonWrapper.new person: assessment.partner, is_single: false,
+                                  dependants: assessment.partner_dependants, gross_income_summary: assessment.partner_gross_income_summary
+      eligible_for_childcare = calculate_childcare_eligibility(applicant, partner)
+      applicant_disposable_income_subtotals = collate_outgoings(applicant,
+                                                                assessment.disposable_income_summary,
+                                                                gross_income_subtotals.applicant_gross_income_subtotals,
+                                                                eligible_for_childcare:,
+                                                                allow_negative_net: true,
+                                                                partner_allowance:)
+      partner_disposable_income_subtotals = collate_outgoings(partner,
+                                                              assessment.partner_disposable_income_summary,
+                                                              gross_income_subtotals.partner_gross_income_subtotals,
+                                                              eligible_for_childcare:,
+                                                              allow_negative_net: true,
+                                                              partner_allowance: 0)
+
+      DisposableIncomeData.new(
+        applicant_disposable_income_subtotals:,
+        partner_disposable_income_subtotals:,
+        combined_monthly_outgoings: applicant_disposable_income_subtotals.total_monthly_outgoings + partner_disposable_income_subtotals.total_monthly_outgoings,
+        combined_monthly_disposable_income: applicant_disposable_income_subtotals.total_monthly_disposable_income + partner_disposable_income_subtotals.total_monthly_disposable_income,
+      )
+    end
+
+    def disposable_income_subtotals_without_partner(gross_income_subtotals)
+      applicant = PersonWrapper.new person: assessment.applicant, is_single: true,
+                                    dependants: assessment.dependants, gross_income_summary: assessment.gross_income_summary
+      eligible_for_childcare = calculate_childcare_eligibility(applicant)
+      applicant_disposable_income_subtotals = collate_outgoings(applicant,
+                                                                assessment.disposable_income_summary,
+                                                                gross_income_subtotals.applicant_gross_income_subtotals,
+                                                                eligible_for_childcare:,
+                                                                allow_negative_net: false,
+                                                                partner_allowance: 0)
+
+      DisposableIncomeData.new(
+        applicant_disposable_income_subtotals:,
+        partner_disposable_income_subtotals: PersonDisposableIncomeSubtotals.new,
+        combined_monthly_outgoings: applicant_disposable_income_subtotals.total_monthly_outgoings,
+        combined_monthly_disposable_income: applicant_disposable_income_subtotals.total_monthly_disposable_income,
+      )
+    end
+
+    def collate_and_assess_capital(combined_monthly_disposable_income)
+      CapitalCollatorAndAssessor.call assessment, total_monthly_disposable_income: combined_monthly_disposable_income
     end
 
     def calculate_childcare_eligibility(applicant, partner = nil)
@@ -139,6 +136,16 @@ module Workflows
 
     def partner_allowance
       Threshold.value_for(:partner_allowance, at: assessment.submission_date)
+    end
+
+    def collate_outgoings(person, disposable_income_summary, gross_income_subtotals, eligible_for_childcare:, allow_negative_net:, partner_allowance:)
+      Collators::OutgoingsCollator.call(submission_date: assessment.submission_date,
+                                        person:,
+                                        disposable_income_summary:,
+                                        gross_income_subtotals:,
+                                        eligible_for_childcare:,
+                                        allow_negative_net:,
+                                        partner_allowance:)
     end
   end
 end

@@ -8,13 +8,14 @@ module RemarkGenerators
 
     delegate :outgoings, to: :disposable_income_summary
 
-    def self.call(assessment, assessed_capital)
-      new(assessment, assessed_capital).call
+    def self.call(assessment, assessed_capital, disposable_income_subtotals)
+      new(assessment, assessed_capital, disposable_income_subtotals).call
     end
 
-    def initialize(assessment, assessed_capital)
+    def initialize(assessment, assessed_capital, disposable_income_subtotals)
       @assessment = assessment
       @assessed_capital = assessed_capital
+      @disposable_income_subtotals = disposable_income_subtotals
     end
 
     def call
@@ -42,7 +43,7 @@ module RemarkGenerators
 
     def check_outgoings_variation
       outgoings.group_by(&:type).each do |_type, collection|
-        AmountVariationChecker.call(@assessment, collection)
+        AmountVariationChecker.call(@assessment, collection, @disposable_income_subtotals)
       end
     end
 
@@ -50,10 +51,10 @@ module RemarkGenerators
       state_benefits.each { |sb| FrequencyChecker.call(@assessment, sb.state_benefit_payments) }
       other_income_sources.each { |oi| FrequencyChecker.call(@assessment, oi.other_income_payments) }
       outgoings.group_by(&:type).each do |_type, collection|
-        FrequencyChecker.call(@assessment, collection)
+        FrequencyChecker.call(@assessment, collection, @disposable_income_subtotals)
       end
       assessment.employments.each do |job|
-        FrequencyChecker.call(@assessment, job.employment_payments, :date)
+        FrequencyChecker.call(@assessment, job.employment_payments, nil, date_attribute: :date)
       end
     end
 

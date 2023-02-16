@@ -31,7 +31,7 @@ module Decorators
           submission_date: assessment.submission_date,
           applicant: ApplicantDecorator.new(assessment.applicant),
           gross_income:,
-          disposable_income: DisposableIncomeDecorator.new(assessment.disposable_income_summary),
+          disposable_income:,
           capital: CapitalDecorator.new(assessment.capital_summary,
                                         @calculation_output.capital_subtotals.applicant_capital_subtotals),
           remarks: RemarksDecorator.new(assessment.remarks, assessment),
@@ -55,8 +55,14 @@ module Decorators
                                  @calculation_output.gross_income_subtotals.partner_gross_income_subtotals)
       end
 
+      def disposable_income
+        DisposableIncomeDecorator.new(assessment.disposable_income_summary,
+                                      @calculation_output.disposable_income_subtotals.applicant_disposable_income_subtotals)
+      end
+
       def partner_disposable_income
-        DisposableIncomeDecorator.new(assessment.partner_disposable_income_summary)
+        DisposableIncomeDecorator.new(assessment.partner_disposable_income_summary,
+                                      @calculation_output.disposable_income_subtotals.partner_disposable_income_subtotals)
       end
 
       def partner_capital

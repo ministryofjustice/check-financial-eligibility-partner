@@ -24,8 +24,8 @@ module Collators
         let(:eligible_for_childcare) { false }
 
         it "does not update the childcare value on the disposable income summary" do
-          collator
-          expect(disposable_income_summary.child_care_bank).to eq 0.0
+          result = collator
+          expect(result.bank).to eq 0.0
         end
       end
 
@@ -33,8 +33,8 @@ module Collators
         let(:eligible_for_childcare) { true }
 
         it "updates the childcare value on the disposable income summary" do
-          collator
-          expect(disposable_income_summary.child_care_bank).to eq 155.63
+          result = collator
+          expect(result.bank).to eq 155.63
         end
       end
     end

@@ -4,16 +4,17 @@ module Collators
   RSpec.describe MaintenanceCollator do
     before { create :bank_holiday }
 
-    let(:assessment) { create :assessment, :with_disposable_income_summary }
+    let(:assessment) { create :assessment, :with_disposable_income_summary, :with_gross_income_summary }
     let(:disposable_income_summary) { assessment.disposable_income_summary }
+    let(:gross_income_summary) { assessment.gross_income_summary }
 
     describe ".call" do
-      subject(:collator) { described_class.call(disposable_income_summary) }
+      subject(:collator) { described_class.call(disposable_income_summary, gross_income_summary) }
 
       context "when there are no maintenance outgoings" do
         it "leaves the monthly maintenance field on the disposable income summary as zero" do
-          collator
-          expect(disposable_income_summary.reload.maintenance_out_bank).to be_zero
+          result = collator
+          expect(result.bank).to be_zero
         end
       end
 
@@ -31,8 +32,8 @@ module Collators
         end
 
         it "calculates the monthly equivalent and updates the disposable income summary" do
-          collator
-          expect(disposable_income_summary.reload.maintenance_out_bank).to eq 112.08
+          result = collator
+          expect(result.bank).to eq 112.08
         end
       end
     end

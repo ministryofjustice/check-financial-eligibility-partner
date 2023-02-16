@@ -1,14 +1,17 @@
 module Collators
   class LegalAidCollator
     class << self
-      def call(disposable_income_summary)
-        legal_aid_bank = Calculators::MonthlyEquivalentCalculator.call(
+      def call(disposable_income_summary, gross_income_summary)
+        bank = Calculators::MonthlyEquivalentCalculator.call(
           assessment_errors: disposable_income_summary.assessment.assessment_errors,
           collection: disposable_income_summary.legal_aid_outgoings,
         )
 
-        # TODO: return this instead of persisting it
-        disposable_income_summary.update!(legal_aid_bank:)
+        cash =  Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary:, operation: :debit, category: :legal_aid)
+
+        regular = Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary:, operation: :debit, category: :legal_aid)
+
+        TransactionCategorySubtotals.new(category: :legal_aid, cash:, bank:, regular:)
       end
     end
   end

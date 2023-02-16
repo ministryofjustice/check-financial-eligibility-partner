@@ -1,16 +1,15 @@
 module Collators
   class GrossIncomeCollator
     class << self
-      def call(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:)
-        new(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:).call
+      def call(assessment:, submission_date:, employments:, gross_income_summary:)
+        new(assessment:, submission_date:, employments:, gross_income_summary:).call
       end
     end
 
-    def initialize(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:)
+    def initialize(assessment:, submission_date:, employments:, gross_income_summary:)
       @assessment = assessment
       @submission_date = submission_date
       @employments = employments
-      @disposable_income_summary = disposable_income_summary
       @gross_income_summary = gross_income_summary
     end
 
@@ -18,7 +17,7 @@ module Collators
       employment_income_subtotals = if @employments.any?
                                       derive_employment_income_subtotals
                                     else
-                                      EmploymentIncomeSubtotals.new(gross_employment_income: 0, benefits_in_kind: 0)
+                                      EmploymentIncomeSubtotals.new
                                     end
       perform_collation(employment_income_subtotals)
     end
@@ -35,10 +34,6 @@ module Collators
                                                               employment: @employments.first)
                end
 
-      @disposable_income_summary.update!(employment_income_deductions: result.employment_income_deductions,
-                                         fixed_employment_allowance: result.fixed_employment_allowance,
-                                         tax: result.tax,
-                                         national_insurance: result.national_insurance)
       add_remarks if @employments.count > 1
 
       result
@@ -82,12 +77,11 @@ module Collators
 
       cash = Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :credit, category:)
       regular = Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :credit, category:)
-      GrossIncomeCategorySubtotals.new(
+      TransactionCategorySubtotals.new(
         category: category.to_sym,
         bank:,
         cash:,
         regular:,
-        all_sources: bank + cash + regular,
       )
     end
 

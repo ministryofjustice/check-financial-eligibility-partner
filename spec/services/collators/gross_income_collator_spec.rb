@@ -20,7 +20,6 @@ module Collators
         described_class.call assessment:,
                              submission_date: assessment.submission_date,
                              employments: assessment.employments,
-                             disposable_income_summary: assessment.disposable_income_summary,
                              gross_income_summary: assessment.gross_income_summary
       end
 
@@ -157,12 +156,11 @@ module Collators
           end
 
           it "updates disposable income summary" do
-            collator
-            disposable_income_summary.reload
-            expect(disposable_income_summary.employment_income_deductions).to eq(-645)
-            expect(disposable_income_summary.tax).to eq(-495)
-            expect(disposable_income_summary.national_insurance).to eq(-150)
-            expect(disposable_income_summary.fixed_employment_allowance).to eq(-45)
+            result = collator
+            expect(result.employment_income_subtotals.employment_income_deductions).to eq(-645)
+            expect(result.employment_income_subtotals.tax).to eq(-495)
+            expect(result.employment_income_subtotals.national_insurance).to eq(-150)
+            expect(result.employment_income_subtotals.fixed_employment_allowance).to eq(-45)
           end
         end
       end
