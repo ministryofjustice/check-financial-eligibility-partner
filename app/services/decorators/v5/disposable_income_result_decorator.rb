@@ -38,7 +38,7 @@ module Decorators
       attr_reader :summary, :gross_income_summary
 
       def net_employment_income
-        @employment_income_subtotals.gross_employment_income.to_f + summary.employment_income_deductions + summary.fixed_employment_allowance
+        @employment_income_subtotals.gross_employment_income + summary.employment_income_deductions + summary.fixed_employment_allowance
       end
 
       def employment_income

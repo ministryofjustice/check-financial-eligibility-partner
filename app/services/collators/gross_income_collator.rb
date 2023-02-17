@@ -1,7 +1,6 @@
 module Collators
   class GrossIncomeCollator
     include Transactions
-    include MonthlyEquivalentCalculatable
 
     class << self
       def call(assessment:, submission_date:, employments:, disposable_income_summary:, gross_income_summary:)
@@ -77,14 +76,20 @@ module Collators
     end
 
     def calculate_category_subtotals(category)
-      bank = category == :benefits ? monthly_state_benefits : categorised_bank_transactions[category]
+      bank = if category == :benefits
+               monthly_state_benefits
+             else
+               categorised_bank_transactions[category]
+             end
+
       cash = monthly_cash_transaction_amount_by(gross_income_summary: @gross_income_summary, operation: :credit, category:)
-      regular = monthly_regular_transaction_amount_by(gross_income_summary: @gross_income_summary, operation: :credit, category:)
+      regular = Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :credit, category:)
       GrossIncomeCategorySubtotals.new(
         category: category.to_sym,
         bank:,
         cash:,
         regular:,
+        all_sources: bank + cash + regular,
       )
     end
 

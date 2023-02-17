@@ -12,11 +12,11 @@ module Decorators
           monthly_student_loan: 250,
           monthly_unspecified_source: 423.35,
           regular_income_categories: [
-            GrossIncomeCategorySubtotals.new(category: :benefits, bank: 1322.6, cash: 0, regular: 0),
-            GrossIncomeCategorySubtotals.new(category: :maintenance_in, bank: 200, cash: 150, regular: 0),
-            GrossIncomeCategorySubtotals.new(category: :friends_or_family, bank: 0, cash: 50, regular: 0),
-            GrossIncomeCategorySubtotals.new(category: :property_or_lodger, bank: 250, cash: 0, regular: 0),
-            GrossIncomeCategorySubtotals.new(category: :pension, bank: 0, cash: 0, regular: 0),
+            GrossIncomeCategorySubtotals.new(category: :benefits, bank: 1322.6, cash: 0, regular: 0, all_sources: 1322.6),
+            GrossIncomeCategorySubtotals.new(category: :maintenance_in, bank: 200, cash: 150, regular: 0, all_sources: 350),
+            GrossIncomeCategorySubtotals.new(category: :friends_or_family, bank: 0, cash: 50, regular: 0, all_sources: 50),
+            GrossIncomeCategorySubtotals.new(category: :property_or_lodger, bank: 250, cash: 0, regular: 0, all_sources: 250),
+            GrossIncomeCategorySubtotals.new(category: :pension, bank: 0, cash: 0, regular: 0, all_sources: 0),
           ],
         )
       end

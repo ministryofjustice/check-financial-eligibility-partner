@@ -79,10 +79,10 @@ module Decorators
 
       def transactions(source)
         {
-          friends_or_family: @subtotals.monthly_regular_incomes(source, :friends_or_family).to_f,
-          maintenance_in: @subtotals.monthly_regular_incomes(source, :maintenance_in).to_f,
-          property_or_lodger: @subtotals.monthly_regular_incomes(source, :property_or_lodger).to_f,
-          pension: @subtotals.monthly_regular_incomes(source, :pension).to_f,
+          friends_or_family: @subtotals.monthly_regular_incomes(source, :friends_or_family),
+          maintenance_in: @subtotals.monthly_regular_incomes(source, :maintenance_in),
+          property_or_lodger: @subtotals.monthly_regular_incomes(source, :property_or_lodger),
+          pension: @subtotals.monthly_regular_incomes(source, :pension),
         }
       end
 
@@ -90,7 +90,7 @@ module Decorators
         {
           monthly_equivalents: {
             all_sources: @subtotals.monthly_regular_incomes(:all_sources, :benefits).to_f,
-            cash_transactions: @subtotals.monthly_regular_incomes(:cash, :benefits).to_f,
+            cash_transactions: @subtotals.monthly_regular_incomes(:cash, :benefits),
             bank_transactions: summary.state_benefits.map { |sb| StateBenefitDecorator.new(sb).as_json },
           },
         }
