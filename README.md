@@ -185,4 +185,3 @@ Secrets have been stored for each environment using `kubectl create secret`. The
 * sentry-dsn
 * notifications-api-key
 * secret-key-base
-* postgresql-postgres-password (for UAT only, as this environment has a pod running Postgres instead of an RDS instance)
