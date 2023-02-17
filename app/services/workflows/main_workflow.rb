@@ -2,8 +2,8 @@ module Workflows
   class MainWorkflow < BaseWorkflowService
     def call
       version_5_verification(assessment)
-      calculation_output = if applicant_receives_relevant_asylum_support?(assessment)
-                             AsylumSupportedWorkflow.call(assessment)
+      calculation_output = if no_means_assessment_needed?(assessment)
+                             blank_calculation_result
                            elsif applicant_passported?
                              PassportedWorkflow.call(assessment)
                            else
@@ -25,9 +25,13 @@ module Workflows
       Creators::EligibilitiesCreator.call(assessment)
     end
 
-    def applicant_receives_relevant_asylum_support?(assessment)
+    def no_means_assessment_needed?(assessment)
       assessment.proceeding_types.all? { _1.ccms_code.to_sym.in?(CFEConstants::IMMIGRATION_AND_ASYLUM_PROCEEDING_TYPE_CCMS_CODES) } &&
         assessment.applicant.receives_asylum_support
+    end
+
+    def blank_calculation_result
+      CalculationOutput.new
     end
   end
 end

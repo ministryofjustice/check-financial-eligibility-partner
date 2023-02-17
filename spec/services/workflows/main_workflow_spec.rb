@@ -27,8 +27,9 @@ module Workflows
       context "for immigration/asylum proceeding types" do
         let(:proceedings_hash) { [%w[IM030 A]] }
 
-        it "calls AsylumSupportedWorkflow" do
-          allow(AsylumSupportedWorkflow).to receive(:call).and_return(CalculationOutput.new)
+        it "does not call a workflow" do
+          expect(PassportedWorkflow).not_to receive(:call)
+          expect(NonPassportedWorkflow).not_to receive(:call)
           expect(Assessors::MainAssessor).to receive(:call).with(assessment)
           MainWorkflow.call(assessment)
         end

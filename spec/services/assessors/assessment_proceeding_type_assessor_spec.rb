@@ -8,9 +8,10 @@ module Assessors
              :with_gross_income_summary,
              :with_disposable_income_summary,
              :with_eligibilities,
-             :with_applicant
+             :with_applicant,
+             proceedings: [[ptc, "A"]]
     end
-    let(:ptc) { assessment.proceeding_type_codes.first }
+    let(:ptc) { "DA003" }
     let(:gross_income_eligibility) { assessment.gross_income_summary.eligibilities.find_by(proceeding_type_code: ptc) }
     let(:disposable_income_eligibility) { assessment.disposable_income_summary.eligibilities.find_by(proceeding_type_code: ptc) }
     let(:capital_eligibility) { assessment.capital_summary.eligibilities.find_by(proceeding_type_code: ptc) }
@@ -59,11 +60,6 @@ module Assessors
 
           context "when using immigration/asylum proceeding type codes" do
             let(:ptc) { "IM030" }
-
-            before do
-              assessment.proceeding_types.order(:ccms_code).first.update!(ccms_code: "IM030")
-              assessment.eligibilities.order(:proceeding_type_code).first.update!(proceeding_type_code: "IM030")
-            end
 
             it "returns eligible for immigration/asylum proceeding type codes" do
               described_class.call(assessment, ptc)
