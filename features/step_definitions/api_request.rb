@@ -30,7 +30,7 @@ end
 Given("I am undertaking a controlled work assessment with an applicant who receives passporting benefits") do
   @api_version = 5
   response = submit_request(:post, "assessments", @api_version,
-                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_representation: "controlled" })
+                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_help: "controlled" })
   @assessment_id = response["assessment_id"]
   submit_request(:post, "assessments/#{@assessment_id}/applicant", @api_version,
                  { applicant: { date_of_birth: "1979-12-20",
@@ -45,7 +45,7 @@ Given("I am undertaking a controlled assessment") do
   StateBenefitType.create! label: "housing_benefit", name: "Housing benefit", exclude_from_gross_income: true
   @api_version = 5
   response = submit_request(:post, "assessments", @api_version,
-                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_representation: "controlled" })
+                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_help: "controlled" })
   @assessment_id = response["assessment_id"]
   submit_request(:post, "assessments/#{@assessment_id}/applicant", @api_version,
                  { applicant: { date_of_birth: "1989-12-20",
@@ -60,7 +60,7 @@ Given("Performing a controlled assessment with first tier immigration case") do
   StateBenefitType.create! label: "housing_benefit", name: "Housing benefit", exclude_from_gross_income: true
   @api_version = 5
   response = submit_request(:post, "assessments", @api_version,
-                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_representation: "controlled" })
+                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_help: "controlled" })
   @assessment_id = response["assessment_id"]
   submit_request(:post, "assessments/#{@assessment_id}/applicant", @api_version,
                  { applicant: { date_of_birth: "1989-12-20",
@@ -75,7 +75,7 @@ Given("Performing a controlled assessment with first tier asylum case") do
   StateBenefitType.create! label: "housing_benefit", name: "Housing benefit", exclude_from_gross_income: true
   @api_version = 5
   response = submit_request(:post, "assessments", @api_version,
-                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_representation: "controlled" })
+                            { client_reference_id: "N/A", submission_date: "2022-05-10", level_of_help: "controlled" })
   @assessment_id = response["assessment_id"]
   submit_request(:post, "assessments/#{@assessment_id}/applicant", @api_version,
                  { applicant: { date_of_birth: "1989-12-20",
