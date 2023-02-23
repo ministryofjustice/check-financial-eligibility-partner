@@ -184,6 +184,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_25_142836) do
     t.string "client_id", null: false
     t.string "calculation_method"
     t.string "type", default: "ApplicantEmployment"
+    t.boolean "receiving_only_statutory_sick_or_maternity_pay", default: false
     t.index ["assessment_id"], name: "index_employments_on_assessment_id"
   end
 
