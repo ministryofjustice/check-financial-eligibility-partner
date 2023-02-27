@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_25_142836) do
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "self_employed", default: false
     t.boolean "employed"
-    t.boolean "receives_asylum_support", default: false
+    t.boolean "receives_asylum_support", default: false, null: false
     t.index ["assessment_id"], name: "index_applicants_on_assessment_id"
   end
 
