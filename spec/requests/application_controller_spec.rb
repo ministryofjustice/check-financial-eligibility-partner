@@ -39,7 +39,7 @@ RSpec.describe ApplicationController, type: :request do
         errors: ["ZeroDivisionError: divided by 0"],
       }.to_json
       get "/my_test?raise_error=1"
-      expect(parsed_response).to eq JSON.parse(expected_response, symbolize_names: true)
+      expect(parsed_response.except(:trace)).to eq JSON.parse(expected_response, symbolize_names: true)
     end
 
     it "is captured by Sentry" do

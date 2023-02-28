@@ -2,6 +2,12 @@ require "rails_helper"
 
 module Utilities
   RSpec.describe ProceedingTypeThresholdPopulator do
+    before do
+      mock_lfa_responses [{ ccms_code: "DA001", client_involvement_type: "A" },
+                          { ccms_code: "DA005", client_involvement_type: "Z" },
+                          { ccms_code: "SE014", client_involvement_type: "A" }]
+    end
+
     describe ".call" do
       let(:proceeding_hash) { [%w[DA001 A], %w[DA005 Z], %w[SE014 A]] }
       let(:assessment) { create :assessment, submission_date: Date.new(2022, 7, 12), proceedings: proceeding_hash }
@@ -55,15 +61,12 @@ module Utilities
       end
 
       it "calls LegalFrameworkAPI::ThresholdWaivers with expected payload" do
-        expect(LegalFrameworkAPI::MockThresholdWaivers).to receive(:call).with(expected_payload)
-        allow(LegalFrameworkAPI::MockThresholdWaivers).to receive(:call).and_return(response)
+        allow(LegalFrameworkAPI::ThresholdWaivers).to receive(:call).with(expected_payload).and_return(response)
 
         described_class.call(assessment)
       end
 
       it "updates the threshold values on the proceeding type records where the threshold is not waived" do
-        allow(LegalFrameworkAPI::MockThresholdWaivers).to receive(:call).and_return(response)
-
         described_class.call(assessment)
 
         pt = assessment.reload.proceeding_types.find_by(ccms_code: "DA005")
@@ -78,8 +81,6 @@ module Utilities
       end
 
       it "updates threshold values on proceeding type records where the threshold is waived" do
-        allow(LegalFrameworkAPI::MockThresholdWaivers).to receive(:call).and_return(response)
-
         described_class.call(assessment)
 
         pt = assessment.reload.proceeding_types.find_by(ccms_code: "DA001")
@@ -92,7 +93,7 @@ module Utilities
         before { assessment.update(level_of_help: "controlled") }
 
         it "ignores waivers" do
-          expect(LegalFrameworkAPI::MockThresholdWaivers).not_to receive(:call)
+          expect(LegalFrameworkAPI::ThresholdWaivers).not_to receive(:call)
 
           described_class.call(assessment)
 
@@ -107,7 +108,7 @@ module Utilities
         let(:proceeding_hash) { [%w[IM030 A]] }
 
         it "ignores waivers" do
-          expect(LegalFrameworkAPI::MockThresholdWaivers).not_to receive(:call)
+          expect(LegalFrameworkAPI::ThresholdWaivers).not_to receive(:call)
 
           described_class.call(assessment)
 

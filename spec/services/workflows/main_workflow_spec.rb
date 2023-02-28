@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module Workflows
-  RSpec.describe ".call" do
+  RSpec.describe "MainWorkflow#call" do
     let(:proceedings_hash) { [%w[DA003 A], %w[SE013 I]] }
     let(:bank_holiday_response) { %w[2015-01-01 2015-04-03 2015-04-06] }
     let(:assessment) do
@@ -13,6 +13,8 @@ module Workflows
 
     before do
       allow(GovukBankHolidayRetriever).to receive(:dates).and_return(bank_holiday_response)
+      mock_lfa_responses [{ ccms_code: "DA003", client_involvement_type: "A" },
+                          { ccms_code: "SE013", client_involvement_type: "I" }]
     end
 
     context "applicant is asylum_supported" do

@@ -3,7 +3,6 @@ module Collators
     class << self
       def call(disposable_income_summary)
         legal_aid_bank = Calculators::MonthlyEquivalentCalculator.call(
-          assessment_errors: disposable_income_summary.assessment.assessment_errors,
           collection: disposable_income_summary.legal_aid_outgoings,
         )
 

@@ -1,0 +1,125 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://legal-framework-api-staging.cloud-platform.service.justice.gov.uk/threshold_waivers
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"f6679d0a-4667-429f-86ba-a61988c9be6d","proceedings":[{"ccms_code":"DA003","client_involvement_type":"W"},{"ccms_code":"DA004","client_involvement_type":"A"},{"ccms_code":"SE003","client_involvement_type":"Z"},{"ccms_code":"SE013","client_involvement_type":"D"},{"ccms_code":"SE014","client_involvement_type":"I"}]}'
+    headers:
+      User-Agent:
+      - Faraday v1.10.3
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 13 Mar 2023 09:05:42 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1024'
+      Connection:
+      - keep-alive
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Etag:
+      - W/"20096f3f4a74abf266d471c8b59e834d"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 6bf057d290bd980e1769fd27a1f681b2
+      X-Runtime:
+      - '0.066817'
+      Vary:
+      - Accept, Origin
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"f6679d0a-4667-429f-86ba-a61988c9be6d","success":true,"proceedings":[{"ccms_code":"DA003","full_s8_only":false,"matter_type":"Domestic
+        abuse","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"W"},{"ccms_code":"DA004","full_s8_only":false,"matter_type":"Domestic
+        abuse","gross_income_upper":true,"disposable_income_upper":true,"capital_upper":true,"client_involvement_type":"A"},{"ccms_code":"SE003","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"Z"},{"ccms_code":"SE013","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"D"},{"ccms_code":"SE014","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"I"}]}'
+  recorded_at: Mon, 13 Mar 2023 09:05:42 GMT
+- request:
+    method: post
+    uri: https://legal-framework-api-staging.cloud-platform.service.justice.gov.uk/threshold_waivers
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"c1ee29b5-74d0-4e50-a4ba-079769119301","proceedings":[{"ccms_code":"DA003","client_involvement_type":"W"},{"ccms_code":"DA004","client_involvement_type":"A"},{"ccms_code":"SE003","client_involvement_type":"Z"},{"ccms_code":"SE013","client_involvement_type":"D"},{"ccms_code":"SE014","client_involvement_type":"I"}]}'
+    headers:
+      User-Agent:
+      - Faraday v1.10.3
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 13 Mar 2023 09:05:42 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1024'
+      Connection:
+      - keep-alive
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Etag:
+      - W/"d9cf8b58184705817d26a15c97bdc40f"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 104b1a7ebce6852d5c9aa82d1f7b2ca3
+      X-Runtime:
+      - '0.043734'
+      Vary:
+      - Accept, Origin
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"c1ee29b5-74d0-4e50-a4ba-079769119301","success":true,"proceedings":[{"ccms_code":"DA003","full_s8_only":false,"matter_type":"Domestic
+        abuse","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"W"},{"ccms_code":"DA004","full_s8_only":false,"matter_type":"Domestic
+        abuse","gross_income_upper":true,"disposable_income_upper":true,"capital_upper":true,"client_involvement_type":"A"},{"ccms_code":"SE003","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"Z"},{"ccms_code":"SE013","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"D"},{"ccms_code":"SE014","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"I"}]}'
+  recorded_at: Mon, 13 Mar 2023 09:05:42 GMT
+recorded_with: VCR 6.1.0

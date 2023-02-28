@@ -28,7 +28,6 @@ module Collators
 
     def child_care_bank
       Calculators::MonthlyEquivalentCalculator.call(
-        assessment_errors: @disposable_income_summary.assessment.assessment_errors,
         collection: @disposable_income_summary.childcare_outgoings,
       )
     end

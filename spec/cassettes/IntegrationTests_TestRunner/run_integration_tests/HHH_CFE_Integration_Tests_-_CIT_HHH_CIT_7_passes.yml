@@ -1,0 +1,119 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://legal-framework-api-staging.cloud-platform.service.justice.gov.uk/threshold_waivers
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"5f6f4f6b-2bdd-427f-963a-e7deeeb6cf48","proceedings":[{"ccms_code":"SE013","client_involvement_type":"W"},{"ccms_code":"SE014","client_involvement_type":"W"}]}'
+    headers:
+      User-Agent:
+      - Faraday v1.10.3
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 13 Mar 2023 09:06:06 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '466'
+      Connection:
+      - keep-alive
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Etag:
+      - W/"632b17962e7a2a5149f8472088e77047"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 7aa26592ebc2d8fe147f8517872c0fc6
+      X-Runtime:
+      - '0.032333'
+      Vary:
+      - Accept, Origin
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"5f6f4f6b-2bdd-427f-963a-e7deeeb6cf48","success":true,"proceedings":[{"ccms_code":"SE013","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"W"},{"ccms_code":"SE014","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"W"}]}'
+  recorded_at: Mon, 13 Mar 2023 09:06:06 GMT
+- request:
+    method: post
+    uri: https://legal-framework-api-staging.cloud-platform.service.justice.gov.uk/threshold_waivers
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"b573617c-693b-4683-8666-7e70ad5b2d09","proceedings":[{"ccms_code":"SE013","client_involvement_type":"W"},{"ccms_code":"SE014","client_involvement_type":"W"}]}'
+    headers:
+      User-Agent:
+      - Faraday v1.10.3
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 13 Mar 2023 09:06:07 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '466'
+      Connection:
+      - keep-alive
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Etag:
+      - W/"1010c9b67766b48150e482852a997e29"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - b6d8d66f4fab0ab2c55ebb26a0b125b2
+      X-Runtime:
+      - '0.025203'
+      Vary:
+      - Accept, Origin
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"request_id":"b573617c-693b-4683-8666-7e70ad5b2d09","success":true,"proceedings":[{"ccms_code":"SE013","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"W"},{"ccms_code":"SE014","full_s8_only":false,"matter_type":"Children
+        - section 8","gross_income_upper":false,"disposable_income_upper":false,"capital_upper":false,"client_involvement_type":"W"}]}'
+  recorded_at: Mon, 13 Mar 2023 09:06:07 GMT
+recorded_with: VCR 6.1.0

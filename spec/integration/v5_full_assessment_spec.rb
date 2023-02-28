@@ -11,6 +11,10 @@ RSpec.describe "Full V5 passported spec" do
 
     ENV["VERBOSE"] = "false"
     create :bank_holiday
+    mock_lfa_responses [{ ccms_code: "DA004", client_involvement_type: "A" },
+                        { ccms_code: "DA020", client_involvement_type: "A" },
+                        { ccms_code: "SE004", client_involvement_type: "A" },
+                        { ccms_code: "SE013", client_involvement_type: "A" }]
   end
 
   context "when applicant is passported" do

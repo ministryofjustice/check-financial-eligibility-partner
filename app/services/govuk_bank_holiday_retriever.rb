@@ -8,15 +8,13 @@ class GovukBankHolidayRetriever
   end
 
   def data
-    return raise_error unless response.is_a?(Net::HTTPOK)
+    raise_error unless response.is_a?(Net::HTTPOK)
 
     @data ||= JSON.parse(response.body)
   end
 
   def dates(group)
-    return if data.empty?
-
-    data.dig(group, "events")&.pluck("date")
+    data.dig(group, "events").pluck("date")
   end
 
 private

@@ -3,6 +3,11 @@ module LegalFrameworkAPI
     ENDPOINT = "threshold_waivers".freeze
 
     def self.call(proceeding_type_details)
+      # if Rails.env.production?
+      #   new(proceeding_type_details).call
+      # else
+      #   LegalFrameworkAPI::MockThresholdWaivers.new(proceeding_type_details).call
+      # end
       new(proceeding_type_details).call
     end
 

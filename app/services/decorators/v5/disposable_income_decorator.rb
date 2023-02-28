@@ -9,7 +9,7 @@ module Decorators
       end
 
       def as_json
-        payload unless @summary.nil?
+        payload
       end
 
     private

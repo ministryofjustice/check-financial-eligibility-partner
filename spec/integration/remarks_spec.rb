@@ -11,6 +11,7 @@ RSpec.describe "contribution_required Full Assessment with remarks" do
 
     ENV["VERBOSE"] = "false"
     create :bank_holiday
+    mock_lfa_responses [{ ccms_code: "DA005", client_involvement_type: "A" }]
   end
 
   it "returns the expected payload with all remarks" do

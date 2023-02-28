@@ -11,6 +11,7 @@ RSpec.describe "Eligible Full Assessment with policy disregard remarks" do
 
     ENV["VERBOSE"] = "false"
     create :bank_holiday
+    mock_lfa_responses proceeding_type_params.fetch("proceeding_types").map(&:symbolize_keys)
   end
 
   it "returns the expected payload with no policy disregards remarks" do
@@ -43,7 +44,7 @@ RSpec.describe "Eligible Full Assessment with policy disregard remarks" do
   end
 
   def post_proceeding_types(assessment_id)
-    post assessment_proceeding_types_path(assessment_id), params: proceeding_type_params, headers: headers
+    post assessment_proceeding_types_path(assessment_id), params: proceeding_type_params.to_json, headers: headers
     output_response(:post, :proceeding_types)
   end
 
@@ -121,7 +122,7 @@ RSpec.describe "Eligible Full Assessment with policy disregard remarks" do
         { "ccms_code" => "SE004", "client_involvement_type" => "A" },
         { "ccms_code" => "SE013", "client_involvement_type" => "A" },
       ],
-    }.to_json
+    }
   end
 
   def capitals_params

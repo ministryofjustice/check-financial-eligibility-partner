@@ -1,6 +1,10 @@
 require "swagger_helper"
 
 RSpec.describe "full_assessment", type: :request, swagger_doc: "v5/swagger.yaml" do
+  before do
+    mock_lfa_responses [{ ccms_code: "DA001", client_involvement_type: "A" }]
+  end
+
   path "/v2/assessments" do
     post("create") do
       tags "Perform assessment with single call"

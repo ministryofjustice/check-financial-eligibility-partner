@@ -30,7 +30,6 @@ module Calculators
     def monthly_housing_benefit
       @monthly_housing_benefit ||= begin
         housing_benefit_payments = Calculators::MonthlyEquivalentCalculator.call(
-          assessment_errors: @disposable_income_summary.assessment.assessment_errors,
           collection: housing_benefit_records,
         )
         housing_benefit_payments + monthly_housing_benefit_regular_transactions
@@ -45,7 +44,6 @@ module Calculators
 
     def gross_housing_costs_bank
       monthly_amount = Calculators::MonthlyEquivalentCalculator.call(
-        assessment_errors: @disposable_income_summary.assessment.assessment_errors,
         collection: @disposable_income_summary.housing_cost_outgoings,
         amount_method: :allowable_amount,
       )
@@ -73,7 +71,6 @@ module Calculators
 
     def calculate_actual_housing_costs
       Calculators::MonthlyEquivalentCalculator.call(
-        assessment_errors: @disposable_income_summary.assessment.assessment_errors,
         collection: housing_cost_outgoings,
       )
     end

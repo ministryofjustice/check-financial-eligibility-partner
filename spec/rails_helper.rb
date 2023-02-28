@@ -110,3 +110,10 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
+
+def mock_lfa_responses(proceeding_type_details = nil)
+  stub_service = class_double(LegalFrameworkAPI::ThresholdWaivers).as_stubbed_const
+  if proceeding_type_details
+    allow(stub_service).to receive(:call).and_return(LegalFrameworkAPI::MockThresholdWaivers.call(proceeding_type_details))
+  end
+end

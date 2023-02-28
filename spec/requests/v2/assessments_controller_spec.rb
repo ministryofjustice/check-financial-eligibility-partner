@@ -2,6 +2,10 @@ require "rails_helper"
 
 module V2
   RSpec.describe AssessmentsController, type: :request do
+    before do
+      mock_lfa_responses [{ ccms_code: "DA001", client_involvement_type: "A" }]
+    end
+
     describe "POST /create" do
       let(:headers) { { "CONTENT_TYPE" => "application/json", "Accept" => "application/json" } }
       let(:assessment) { parsed_response.fetch(:assessment).except(:id) }

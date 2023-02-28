@@ -34,11 +34,11 @@ module Creators
     end
 
     def new_main_home
-      new_property(main_home_attributes, true) if main_home_attributes
+      new_property(main_home_attributes, true)
     end
 
     def new_additional_properties
-      additional_properties_attributes&.each do |attrs|
+      additional_properties_attributes.each do |attrs|
         new_property(attrs, false)
       end
     end

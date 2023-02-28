@@ -16,7 +16,8 @@ module Utilities
   private
 
     def retrieve_waiver_data
-      service = Rails.env.production? ? LegalFrameworkAPI::ThresholdWaivers : LegalFrameworkAPI::MockThresholdWaivers
+      # service = Rails.env.production? ? LegalFrameworkAPI::ThresholdWaivers : LegalFrameworkAPI::MockThresholdWaivers
+      service = LegalFrameworkAPI::ThresholdWaivers
       @waiver_data = service.call(proceeding_type_details).fetch(:proceedings)
     end
 

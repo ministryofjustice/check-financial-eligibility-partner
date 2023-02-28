@@ -117,8 +117,10 @@ module Workflows
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
                                                  eligible_for_childcare:)
-        assessment.disposable_income_summary.update!(combined_total_disposable_income: assessment.disposable_income_summary.total_disposable_income,
-                                                     combined_total_outgoings_and_allowances: assessment.disposable_income_summary.total_outgoings_and_allowances)
+        assessment.disposable_income_summary.update!(
+          combined_total_disposable_income: assessment.disposable_income_summary.total_disposable_income,
+          combined_total_outgoings_and_allowances: assessment.disposable_income_summary.total_outgoings_and_allowances,
+        )
       end
       Assessors::DisposableIncomeAssessor.call(disposable_income_summary: assessment.disposable_income_summary,
                                                total_disposable_income: assessment.disposable_income_summary.combined_total_disposable_income)

@@ -30,7 +30,6 @@ module Calculators
 
         calculator
         assessment.disposable_income_summary.reload
-        @assessment = assessment
       end
 
       context "when applicant has no dependants" do
