@@ -863,6 +863,9 @@ paths:
                             type: number
                           assessed_capital:
                             type: number
+                            minimum: 0
+                            description: Amount of assessed capital. Zero if deductions
+                              exceed total capital.
                           combined_assessed_capital:
                             type: number
                           combined_capital_contribution:
