@@ -30,7 +30,7 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /ping
+              path: /status
               port: http
             initialDelaySeconds: 30
           readinessProbe:

@@ -19,7 +19,8 @@ private
 
   def database_alive?
     ActiveRecord::Base.connection.active?
-  rescue PG::ConnectionBad
+    Assessment.count
+  rescue PG::ConnectionBad, PG::UndefinedTable
     false
   end
 end
