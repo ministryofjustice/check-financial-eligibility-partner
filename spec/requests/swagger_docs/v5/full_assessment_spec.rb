@@ -1175,7 +1175,7 @@ RSpec.describe "full_assessment", type: :request, swagger_doc: "v5/swagger.yaml"
                          assessed_capital: {
                            type: :number,
                            minimum: 0,
-                           description: "Amount of assessed capital. Zero if deductions exceed total capital."
+                           description: "Amount of assessed capital. Zero if deductions exceed total capital.",
                          },
                          combined_assessed_capital: { type: :number },
                          combined_capital_contribution: { type: :number },
