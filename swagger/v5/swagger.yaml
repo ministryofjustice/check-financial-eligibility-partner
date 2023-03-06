@@ -99,18 +99,24 @@ components:
       properties:
         value:
           type: number
+          minimum: 0.0
         outstanding_mortgage:
           type: number
+          minimum: 0.0
         percentage_owned:
           type: integer
+          minimum: 0
+          maximum: 100
         main_home:
           type: boolean
         shared_with_housing_assoc:
           type: boolean
         transaction_allowance:
           type: number
+          minimum: 0.0
         allowable_outstanding_mortgage:
           type: number
+          minimum: 0.0
         net_value:
           type: number
         net_equity:

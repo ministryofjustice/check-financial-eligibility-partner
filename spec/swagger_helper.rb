@@ -69,12 +69,17 @@ RSpec.configure do |config|
             properties: {
               value: {
                 type: :number,
+                minimum: 0.0,
               },
               outstanding_mortgage: {
                 type: :number,
+                minimum: 0.0,
               },
+              # The minimum has to be zero because we have to have a 'dummy' main home sometimes
               percentage_owned: {
                 type: :integer,
+                minimum: 0,
+                maximum: 100,
               },
               main_home: {
                 type: :boolean,
@@ -84,9 +89,11 @@ RSpec.configure do |config|
               },
               transaction_allowance: {
                 type: :number,
+                minimum: 0.0,
               },
               allowable_outstanding_mortgage: {
                 type: :number,
+                minimum: 0.0,
               },
               net_value: {
                 type: :number,
