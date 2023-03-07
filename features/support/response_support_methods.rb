@@ -49,6 +49,8 @@ end
 
 # Fetch the json values from within the response based on the mapping defined for the section
 def extract_response_section(response, single_shot_response, version, section_name)
+  raise "Single shot API error" if response != single_shot_response
+
   section_path = response_section_for(version, section_name)
 
   a = section_from_path(response, section_path, section_name)

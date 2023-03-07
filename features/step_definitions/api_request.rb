@@ -59,7 +59,6 @@ end
 
 Given("I am using version {int} of the API") do |int|
   @api_version = int
-  @single_shot_api = false
   @capitals_data = {}
 end
 
