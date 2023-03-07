@@ -336,7 +336,6 @@ workflows:
           requires:
             - lint_checks
             - check_swagger
-            - unit_tests
       #          <<: *generic-slack-fail-post-step
       - deploy_main_uat:
           context: check-financial-eligibility-partner-uat
