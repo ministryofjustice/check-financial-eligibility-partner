@@ -63,13 +63,6 @@ Given("I am using version {int} of the API") do |int|
   @capitals_data = {}
 end
 
-# Single-shot API has identical responses to v5 API
-Given("I am using the single-shot API") do
-  @api_version = 5
-  @single_shot_api = true
-  @capitals_data = {}
-end
-
 Given("I create an assessment with the following details:") do |table|
   data = table.rows_hash
 
@@ -180,52 +173,50 @@ When("I retrieve the final assessment") do
                      capitals: }
   end
 
-  if @single_shot_api
-    single_shot_api_data = { assessment: @assessment_data }
-                                 .merge(@applicant_data)
-                                 .merge(@proceeding_type_data)
-    single_shot_api_data.merge!(@dependant_data) if @dependant_data
-    single_shot_api_data.merge!(employments_data) if employments_data
-    single_shot_api_data.merge!(@other_incomes_data) if @other_incomes_data
-    single_shot_api_data[:irregular_incomes] = @irregular_income_data if @irregular_income_data
-    single_shot_api_data.merge!(@benefits_data) if @benefits_data
+  response = submit_request(:post, "assessments", @api_version, @assessment_data)
+  assessment_id = response["assessment_id"]
+  submit_request(:post, "assessments/#{assessment_id}/proceeding_types", @api_version, @proceeding_type_data)
+  submit_request(:post, "assessments/#{assessment_id}/applicant", @api_version, @applicant_data)
+  submit_request(:post, "assessments/#{assessment_id}/dependants", @api_version, @dependant_data) if @dependant_data
 
-    single_shot_api_data.merge!(@outgoings_data) if @outgoings_data
+  submit_request(:post, "assessments/#{assessment_id}/employments", @api_version, employments_data) if employments_data
+  submit_request(:post, "assessments/#{assessment_id}/other_incomes", @api_version, @other_incomes_data) if @other_incomes_data
+  submit_request(:post, "assessments/#{assessment_id}/irregular_incomes", @api_version, @irregular_income_data) if @irregular_income_data
+  submit_request(:post, "assessments/#{assessment_id}/state_benefits", @api_version, @benefits_data) if @benefits_data
 
-    single_shot_api_data.merge!(main_home_data) if main_home_data
-    single_shot_api_data.merge!(@vehicle_data) if @vehicle_data
-    single_shot_api_data[:capitals] = @capitals_data if @capitals_data
-    single_shot_api_data[:partner] = partner_data if partner_data
+  submit_request(:post, "assessments/#{assessment_id}/outgoings", @api_version, @outgoings_data) if @outgoings_data
 
-    @response = submit_request :post, "/v2/assessments", @api_version, single_shot_api_data
-  else
-    response = submit_request(:post, "assessments", @api_version, @assessment_data)
-    assessment_id = response["assessment_id"]
-    submit_request(:post, "assessments/#{assessment_id}/proceeding_types", @api_version, @proceeding_type_data)
-    submit_request(:post, "assessments/#{assessment_id}/applicant", @api_version, @applicant_data)
-    submit_request(:post, "assessments/#{assessment_id}/dependants", @api_version, @dependant_data) if @dependant_data
+  submit_request(:post, "assessments/#{assessment_id}/properties", @api_version, main_home_data) if main_home_data
+  submit_request(:post, "assessments/#{assessment_id}/vehicles", @api_version, @vehicle_data) if @vehicle_data
+  submit_request(:post, "assessments/#{assessment_id}/capitals", @api_version, @capitals_data) if @capitals_data
 
-    submit_request(:post, "assessments/#{assessment_id}/employments", @api_version, employments_data) if employments_data
-    submit_request(:post, "assessments/#{assessment_id}/other_incomes", @api_version, @other_incomes_data) if @other_incomes_data
-    submit_request(:post, "assessments/#{assessment_id}/irregular_incomes", @api_version, @irregular_income_data) if @irregular_income_data
-    submit_request(:post, "assessments/#{assessment_id}/state_benefits", @api_version, @benefits_data) if @benefits_data
+  submit_request(:post, "assessments/#{assessment_id}/partner_financials", @api_version, partner_data) if partner_data
 
-    submit_request(:post, "assessments/#{assessment_id}/outgoings", @api_version, @outgoings_data) if @outgoings_data
+  @response = submit_request(:get, "assessments/#{assessment_id}", @api_version)
 
-    submit_request(:post, "assessments/#{assessment_id}/properties", @api_version, main_home_data) if main_home_data
-    submit_request(:post, "assessments/#{assessment_id}/vehicles", @api_version, @vehicle_data) if @vehicle_data
-    submit_request(:post, "assessments/#{assessment_id}/capitals", @api_version, @capitals_data) if @capitals_data
+  single_shot_api_data = { assessment: @assessment_data }
+                           .merge(@applicant_data)
+                           .merge(@proceeding_type_data)
+  single_shot_api_data.merge!(@dependant_data) if @dependant_data
+  single_shot_api_data.merge!(employments_data) if employments_data
+  single_shot_api_data.merge!(@other_incomes_data) if @other_incomes_data
+  single_shot_api_data[:irregular_incomes] = @irregular_income_data if @irregular_income_data
+  single_shot_api_data.merge!(@benefits_data) if @benefits_data
 
-    submit_request(:post, "assessments/#{assessment_id}/partner_financials", @api_version, partner_data) if partner_data
+  single_shot_api_data.merge!(@outgoings_data) if @outgoings_data
 
-    @response = submit_request(:get, "assessments/#{assessment_id}", @api_version)
-  end
+  single_shot_api_data.merge!(main_home_data) if main_home_data
+  single_shot_api_data.merge!(@vehicle_data) if @vehicle_data
+  single_shot_api_data[:capitals] = @capitals_data if @capitals_data
+  single_shot_api_data[:partner] = partner_data if partner_data
+
+  @single_shot_response = submit_request :post, "/v2/assessments", @api_version, single_shot_api_data
 end
 
 Then("I should see the following overall summary:") do |table|
   failures = []
   table.hashes.each do |row|
-    result = extract_response_section(@response, @api_version, row["attribute"])
+    result = extract_response_section(@response, @single_shot_response, @api_version, row["attribute"])
     error = validate_response(result, row["value"], row["attribute"])
 
     failures.append(error) if error.present?
@@ -240,7 +231,7 @@ end
 
 # To be used where the response has an array and you're asserting a block within it based on a conditional value within.
 Then("I should see the following {string} details where {string}:") do |attribute, condition, table|
-  response_section = extract_response_section @response, @api_version, attribute
+  response_section = extract_response_section @response, @single_shot_response, @api_version, attribute
 
   param, value = condition.split(":")
 
@@ -265,7 +256,7 @@ Then("I should see the following {string} details where {string}:") do |attribut
 end
 
 Then("I should see the following {string} details:") do |section_name, table|
-  response_section = extract_response_section(@response, @api_version, section_name)
+  response_section = extract_response_section(@response, @single_shot_response, @api_version, section_name)
 
   failures = []
   table.hashes.each do |row|
@@ -281,7 +272,7 @@ Then("I should see the following {string} details:") do |section_name, table|
 end
 
 Then("I should see the following {string} details for the partner:") do |section_name, table|
-  response_section = extract_response_section(@response, @api_version, section_name)
+  response_section = extract_response_section(@response, @single_shot_response, @api_version, section_name)
 
   failures = []
   table.hashes.each do |row|
