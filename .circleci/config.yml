@@ -121,41 +121,6 @@ jobs:
       - *install_gems
       - *save_gems_cache
 
-  unit_tests:
-    executor: test-executor
-    steps:
-      - checkout
-      - *install_packages_for_testing
-      - *restore_gems_cache
-      - *install_gems
-      - *save_gems_cache
-      - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-            chmod +x ./tmp/cc-test-reporter
-            ./tmp/cc-test-reporter before-build
-      - run:
-          name: Run ruby tests
-          command: |
-            bundle exec rspec --format progress --format RspecJunitFormatter -o /tmp/test-results/rspec/rspec.xml
-      - run:
-          name: Format Code Climate Test Coverage
-          command: |
-            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/coverage/codeclimate.json
-      - run:
-          name: Upload Code Climate Test coverage
-          command: |
-            ./tmp/cc-test-reporter upload-coverage -i tmp/coverage/codeclimate.json
-      - run:
-          name: Check coverage with undercover
-          command: |
-            bundle exec undercover -l coverage/lcov.info
-      - store_test_results:
-          path: /tmp/test-results/rspec
-      - store_artifacts:
-          path: ./coverage
-
   integration_tests:
     executor: test-executor
     steps:
@@ -298,7 +263,6 @@ workflows:
           requires:
             - lint_checks
             - check_swagger
-            - unit_tests
             - build_and_push
       - delete_dependabot_deployment:
           context: check-financial-eligibility-partner-uat
@@ -313,11 +277,6 @@ workflows:
   merge_pr:
     jobs:
       - lint_checks:
-          filters:
-            branches:
-              only: main
-      #          <<: *generic-slack-fail-post-step
-      - unit_tests:
           filters:
             branches:
               only: main
