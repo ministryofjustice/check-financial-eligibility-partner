@@ -70,6 +70,12 @@ Feature:
       | pensioner_capital_disregard | 80000.0  |
       | assessed_capital            | 0.0      |
       | pensioner_disregard_applied | 10000.0  |
+    Then I should see the following "partner capital summary" details:
+      | attribute                   | value    |
+      | total_capital               | 64900.0  |
+      | assessed_capital            | 0.0      |
+      | pensioner_disregard_applied | 64900.0  |
     And I should see the following overall summary:
       | attribute                   | value    |
       | assessment_result           | eligible |
+      | combined_assessed_capital   | 0.0      |
