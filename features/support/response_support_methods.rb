@@ -13,7 +13,7 @@ RESPONSE_SECTION_MAPPINGS = {
     "main property" => "assessment.capital.capital_items.properties.main_home",
     "additional property" => "assessment.capital.capital_items.properties.additional_properties.0",
     "vehicle" => "assessment.capital.capital_items.vehicles.0",
-    "partner_capital" => "assessment.partner_capital.capital_items.properties.additional_properties",
+    "partner property" => "assessment.partner_capital.capital_items.properties.additional_properties.0",
     "overall_disposable_income" => "result_summary.partner_disposable_income",
     "employment" => "result_summary.disposable_income.employment_income",
   },
