@@ -72,7 +72,6 @@ RSpec.describe "IntegrationTests::TestRunner", type: :request do
       assessment_id = post_assessment(worksheet)
       payloads_hash.each do |url_method, payload|
         url = Rails.application.routes.url_helpers.__send__(url_method, assessment_id)
-        # puts "url #{url} payload #{payload}"
         noisy_post(url, payload, worksheet.version)
       end
       v1_api_results = get_assessment(assessment_id, worksheet.version)
@@ -90,7 +89,6 @@ RSpec.describe "IntegrationTests::TestRunner", type: :request do
         end
       end
       v2_payload = v2_payloads.reduce(assessment: worksheet.assessment.payload) { |hash, elem| hash.merge(elem) }
-      # puts "V2_payload #{v2_payload}"
       v2_api_results = noisy_post("/v2/assessments", v2_payload, worksheet.version)
       puts Hashdiff.diff(*[v1_api_results, v2_api_results].map { |x| remove_result_noise(x) })
       worksheet.compare_results(v2_api_results)
