@@ -26,5 +26,25 @@ module Creators
         end
       end
     end
+
+    def create_non_liquid_assets
+      return if non_liquid_capital_attributes.nil?
+
+      non_liquid_capital_attributes.each do |attrs|
+        capital_summary.non_liquid_capital_items.create!(attrs.slice(:value, :description, :subject_matter_of_dispute))
+      end
+    end
+
+    def json_validator
+      @json_validator ||= JsonValidator.new("capital", @capital_params)
+    end
+
+    def bank_accounts_attributes
+      @bank_accounts_attributes ||= @capital_params[:bank_accounts]
+    end
+
+    def non_liquid_capital_attributes
+      @non_liquid_capital_attributes ||= @capital_params[:non_liquid_capital]
+    end
   end
 end
