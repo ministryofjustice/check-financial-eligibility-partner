@@ -38,7 +38,6 @@ class Assessment < ApplicationRecord
   has_many :request_logs, dependent: :destroy
 
   delegate :determine_result!, to: :capital_summary
-  delegate :cash_transaction_categories, to: :gross_income_summary
 
   enum :level_of_help, { certificated: 0, controlled: 1 }
 

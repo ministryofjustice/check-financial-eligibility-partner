@@ -17,24 +17,25 @@ module Collators
         disposable_income_summary.update!(dependant_allowance: dependent_allowance)
 
         # sets maintenance_out_bank on disposable_income_summary
-        maintenance_out_bank = Collators::MaintenanceCollator.call(disposable_income_summary)
+        maintenance_out = Collators::MaintenanceCollator.call(disposable_income_summary:, gross_income_summary:)
         # TODO: return this value instead of persisting it
-        disposable_income_summary.update!(maintenance_out_bank:)
+        disposable_income_summary.update!(maintenance_out_bank: maintenance_out.bank,
+                                          maintenance_out_cash: maintenance_out.cash)
 
         housing_costs = Collators::HousingCostsCollator.call(disposable_income_summary:,
-                                                             gross_income_summary:,
                                                              person:,
                                                              submission_date:,
                                                              allow_negative_net:)
         disposable_income_summary.update! housing_benefit: housing_costs.housing_benefit,
-                                          gross_housing_costs: housing_costs.gross_housing_costs,
-                                          rent_or_mortgage_bank: housing_costs.gross_housing_costs_bank,
+                                          gross_housing_costs: housing_costs.gross_housing_costs.all_sources,
+                                          rent_or_mortgage_bank: housing_costs.gross_housing_costs.bank,
+                                          rent_or_mortgage_cash: housing_costs.gross_housing_costs.cash,
                                           net_housing_costs: housing_costs.net_housing_costs
 
         # sets legal_aid_bank on disposable_income_summary
-        legal_aid_bank = Collators::LegalAidCollator.call(disposable_income_summary)
+        legal_aid = Collators::LegalAidCollator.call(disposable_income_summary:, gross_income_summary:)
         # TODO: return this instead of persisting it
-        disposable_income_summary.update!(legal_aid_bank:)
+        disposable_income_summary.update!(legal_aid_bank: legal_aid.bank, legal_aid_cash: legal_aid.cash)
       end
     end
   end

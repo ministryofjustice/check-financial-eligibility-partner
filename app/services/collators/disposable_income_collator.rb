@@ -49,11 +49,7 @@ module Collators
     end
 
     def monthly_cash_by_category(category)
-      if category == :child_care
-        @disposable_income_summary.public_send("#{category}_cash")
-      else
-        Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :debit, category:)
-      end
+      @disposable_income_summary.public_send("#{category}_cash")
     end
 
     def total_outgoings_and_allowances(monthly_cash_transactions_total)
