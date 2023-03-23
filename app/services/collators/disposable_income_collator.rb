@@ -50,7 +50,7 @@ module Collators
 
     def monthly_cash_by_category(category)
       if category == :child_care
-        @disposable_income_summary.child_care_cash
+        @disposable_income_summary.public_send("#{category}_cash")
       else
         Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :debit, category:)
       end

@@ -3,38 +3,36 @@ module Collators
     Result = Data.define(:cash, :bank)
 
     class << self
-      def call(childcare_outgoings:, gross_income_summary:, eligible_for_childcare:, assessment_errors:)
-        new(childcare_outgoings:, gross_income_summary:, eligible_for_childcare:, assessment_errors:).call
+      def call(gross_income_summary:, eligible_for_childcare:, assessment_errors:, childcare_outgoings:)
+        if eligible_for_childcare
+          subtotals(cash: cash(gross_income_summary),
+                    bank: bank(assessment_errors:, childcare_outgoings:),
+                    regular: regular(gross_income_summary))
+        else
+          subtotals(cash: 0, bank: 0, regular: 0)
+        end
       end
-    end
 
-    def initialize(childcare_outgoings:, gross_income_summary:, eligible_for_childcare:, assessment_errors:)
-      @childcare_outgoings = childcare_outgoings
-      @gross_income_summary = gross_income_summary
-      @eligible_for_childcare = eligible_for_childcare
-      @assessment_errors = assessment_errors
-    end
+    private
 
-    def call
-      # TODO: Return these values instead of persisting them
-      if @eligible_for_childcare
-        Result.new(bank: child_care_bank, cash: child_care_cash)
-      else
-        Result.new(bank: 0, cash: 0)
+      def subtotals(cash:, bank:, regular:)
+        TransactionCategorySubtotals.new(category: :child_care, cash:, bank:, regular:).freeze
       end
-    end
 
-  private
+      def bank(assessment_errors:, childcare_outgoings:)
+        Calculators::MonthlyEquivalentCalculator.call(
+          assessment_errors:,
+          collection: childcare_outgoings,
+        )
+      end
 
-    def child_care_bank
-      Calculators::MonthlyEquivalentCalculator.call(
-        assessment_errors: @assessment_errors,
-        collection: @childcare_outgoings,
-      )
-    end
+      def cash(gross_income_summary)
+        Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary:, operation: :debit, category: :child_care)
+      end
 
-    def child_care_cash
-      Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary: @gross_income_summary, operation: :debit, category: :child_care)
+      def regular(gross_income_summary)
+        Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary:, operation: :debit, category: :child_care)
+      end
     end
   end
 end

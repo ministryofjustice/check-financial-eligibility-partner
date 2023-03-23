@@ -1,7 +1,5 @@
 module Calculators
   class HousingCostsCalculator
-    delegate :housing_cost_outgoings, to: :@disposable_income_summary
-
     def initialize(disposable_income_summary:, gross_income_summary:, submission_date:, person:)
       @disposable_income_summary = disposable_income_summary
       @gross_income_summary = gross_income_summary
@@ -67,7 +65,7 @@ module Calculators
     def calculate_actual_housing_costs
       Calculators::MonthlyEquivalentCalculator.call(
         assessment_errors: @disposable_income_summary.assessment.assessment_errors,
-        collection: housing_cost_outgoings,
+        collection: @disposable_income_summary.housing_cost_outgoings,
       )
     end
 
@@ -80,8 +78,8 @@ module Calculators
     end
 
     def all_board_and_lodging?
-      housing_cost_outgoings.present? &&
-        housing_cost_outgoings.map(&:housing_cost_type).all?("board_and_lodging")
+      @disposable_income_summary.housing_cost_outgoings.present? &&
+        @disposable_income_summary.housing_cost_outgoings.map(&:housing_cost_type).all?("board_and_lodging")
     end
 
     def should_halve_full_cost_minus_benefits?

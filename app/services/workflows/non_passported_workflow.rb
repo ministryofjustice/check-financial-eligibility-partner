@@ -109,6 +109,7 @@ module Workflows
                                                  disposable_income_summary: assessment.disposable_income_summary,
                                                  partner_allowance: 0,
                                                  total_gross_income: gross_income_subtotals.applicant_gross_income_subtotals.total_gross_income)
+
         Collators::RegularOutgoingsCollator.call(gross_income_summary: assessment.gross_income_summary.freeze,
                                                  disposable_income_summary: assessment.disposable_income_summary,
                                                  eligible_for_childcare:)

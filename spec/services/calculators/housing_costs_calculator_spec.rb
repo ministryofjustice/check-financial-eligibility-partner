@@ -9,7 +9,7 @@ module Calculators
                           gross_income_summary: assessment.gross_income_summary)
     end
 
-    context "when using outgoings and state_benefits" do
+    context "when using outgoings and state_benefits", :calls_bank_holiday do
       let(:assessment) { create :assessment, :with_gross_income_summary_and_records, :with_disposable_income_summary, with_child_dependants: children }
       let(:rent_or_mortgage_category) { assessment.cash_transaction_categories.detect { |cat| cat.name == "rent_or_mortgage" } }
       let(:rent_or_mortgage_transactions) { rent_or_mortgage_category.cash_transactions.order(:date) }
@@ -17,9 +17,6 @@ module Calculators
       let(:children) { 0 }
 
       before do
-        stub_request(:get, "https://www.gov.uk/bank-holidays.json")
-          .to_return(body: file_fixture("bank-holidays.json").read)
-
         [2.months.ago, 1.month.ago, Date.current].each do |date|
           create :housing_cost_outgoing,
                  disposable_income_summary: assessment.disposable_income_summary,
@@ -311,7 +308,7 @@ module Calculators
       end
     end
 
-    context "when using regular_transactions" do
+    context "when using regular_transactions", :calls_bank_holiday do
       let(:instance) do
         described_class.new(disposable_income_summary: assessment.disposable_income_summary,
                             gross_income_summary: assessment.gross_income_summary,
@@ -320,11 +317,6 @@ module Calculators
       end
       let(:assessment) { create :assessment, :with_gross_income_summary, :with_disposable_income_summary }
       let(:dates) { [Date.current, 1.month.ago, 2.months.ago] }
-
-      before do
-        stub_request(:get, "https://www.gov.uk/bank-holidays.json")
-          .to_return(body: file_fixture("bank-holidays.json").read)
-      end
 
       describe "#gross_housing_costs" do
         subject(:gross_housing_costs) { instance.gross_housing_costs }
