@@ -57,7 +57,7 @@ module Decorators
                                             @calculation_output.disposable_income_subtotals.partner_disposable_income_subtotals,
                                             combined_outgoings: @calculation_output.disposable_income_subtotals.combined_monthly_outgoings,
                                             combined_disposable_income: @calculation_output.disposable_income_subtotals.combined_monthly_disposable_income,
-                                            income_contribution: @calculation_output.disposable_income_subtotals.monthly_income_contribution).as_json
+                                            income_contribution: 0.0).as_json
       end
 
       def partner_capital

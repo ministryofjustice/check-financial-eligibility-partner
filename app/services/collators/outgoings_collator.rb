@@ -1,5 +1,7 @@
 module Collators
   class OutgoingsCollator
+    HousingCosts = Data.define(:category, :all_sources, :bank, :cash)
+
     class << self
       def call(submission_date:, person:, disposable_income_summary:, eligible_for_childcare:, allow_negative_net:, partner_allowance:, gross_income_subtotals:)
         childcare_subtotals = Collators::ChildcareCollator.call(gross_income_summary: person.gross_income_summary,
@@ -25,8 +27,19 @@ module Collators
                                                               gross_income_subtotals.employment_income_subtotals,
                                                               dependant_allowance,
                                                               partner_allowance)
+
+        housing_costs_bank = Calculators::MonthlyEquivalentCalculator.call(
+          assessment_errors: disposable_income_summary.assessment.assessment_errors,
+          collection: disposable_income_summary.housing_cost_outgoings,
+        )
+        housing_costs_cash = Calculators::MonthlyCashTransactionAmountCalculator.call(gross_income_summary: person.gross_income_summary,
+                                                                                      operation: :debit, category: :rent_or_mortgage)
+
+        housing_costs = HousingCosts.new(category: :rent_or_mortgage, bank: housing_costs_bank, cash: housing_costs_cash,
+                                         all_sources: housing_costs_bank + housing_costs_cash)
+
         PersonDisposableIncomeSubtotals.new(
-          category_subtotals:,
+          category_subtotals: category_subtotals + [housing_costs],
           dependant_allowance:,
           housing_costs_subtotals:,
           partner_allowance:,

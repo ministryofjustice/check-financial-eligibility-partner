@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module Collators
-  RSpec.describe OutgoingsCollator do
+  RSpec.describe OutgoingsCollator, :calls_bank_holiday do
     let(:assessment) { create :assessment, :with_everything }
     let(:person) do
       instance_double(PersonWrapper, employed?: assessment.applicant&.employed?,
