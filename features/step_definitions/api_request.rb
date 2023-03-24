@@ -16,6 +16,11 @@ Given("I am undertaking a certificated assessment") do
   @proceeding_type_data = { "proceeding_types": [{ ccms_code: "DA001", client_involvement_type: "A" }] }
 end
 
+Given("It is a first tier immigration case") do
+  @proceeding_type_data = { "proceeding_types": [{ ccms_code: CFEConstants::IMMIGRATION_PROCEEDING_TYPE_CCMS_CODE, client_involvement_type: "A" }] }
+end
+
+
 Given("A submission date of {string}") do |date|
   @assessment_data.merge! submission_date: date
 end
