@@ -32,10 +32,10 @@ module Calculators
         assessment_errors: @disposable_income_summary.assessment.assessment_errors,
         collection: @disposable_income_summary.housing_cost_outgoings,
         amount_method: :allowable_amount,
-        )
+      )
     end
 
-    private
+  private
 
     def monthly_housing_benefit_regular_transactions
       Calculators::MonthlyRegularTransactionAmountCalculator.call(gross_income_summary: @person.gross_income_summary, operation: :credit, category: :housing_benefit)
