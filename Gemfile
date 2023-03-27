@@ -106,6 +106,8 @@ group :test do
   gem "webmock", ">= 3.13.0"
 end
 
+# mini profiler
+gem "rack-mini-profiler"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data"
-gem "rack-mini-profiler"
