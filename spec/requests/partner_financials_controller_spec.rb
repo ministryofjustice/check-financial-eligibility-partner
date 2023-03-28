@@ -16,7 +16,7 @@ describe PartnerFinancialsController, :calls_bank_holiday, type: :request do
       post assessment_partner_financials_path(assessment), params: partner_financials_params.to_json, headers:
     end
 
-    context "with apply test payload" do
+    context "with outgoings" do
       let(:partner_financials_params) do
         {
           "partner": {
