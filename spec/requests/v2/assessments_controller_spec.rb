@@ -424,20 +424,6 @@ module V2
 
       context "without dependants, cash transactions or employment income" do
         let(:payment_date) { "2022-05-15" }
-        let(:child_care_params) do
-          [
-            {
-              name: "child_care",
-              payments: [
-                {
-                  payment_date:,
-                  amount: Faker::Number.decimal(l_digits: 3, r_digits: 2),
-                  client_id: client_ids.first,
-                },
-              ],
-            },
-          ]
-        end
         let(:outgoings_params) do
           [
             {

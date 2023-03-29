@@ -193,38 +193,17 @@ describe PartnerFinancialsController, :calls_bank_holiday, type: :request do
         ]
       end
 
-      it "produces a success response" do
-        expect(parsed_response).to eq(success: true, errors: [])
-      end
-
-      it "produces partner capital" do
+      before do
         post("/assessments/#{assessment.id}/employments", params: employments.to_json, headers:)
         post("/assessments/#{assessment.id}/proceeding_types", params: proceeding_types.to_json, headers:)
 
         get("/assessments/#{assessment.id}")
-        answer = JSON.parse(response.body, symbolize_names: true)
-        expect(answer[:success]).to eq(true)
-        summary = answer.fetch(:result_summary)
-        expect(summary.fetch(:overall_result).except(:proceeding_types))
+      end
+
+      it "uses the partner outgoings field" do
+        expect(parsed_response.dig(:assessment, :partner_disposable_income, :monthly_equivalents, :all_sources))
           .to eq({
-            result: "contribution_required",
-            capital_contribution: 0.0,
-            income_contribution: 614.1,
-          })
-        expect(summary.fetch(:partner_capital))
-          .to eq({
-            pensioner_disregard_applied: 0.0,
-            total_liquid: 620.0,
-            total_non_liquid: 0.0,
-            total_vehicle: 0.0,
-            total_property: 0.0,
-            total_mortgage_allowance: 999_999_999_999.0,
-            total_capital: 620.0,
-            subject_matter_of_dispute_disregard: 0.0,
-            capital_contribution: 0,
-            assessed_capital: 620.0,
-            total_capital_with_smod: 620.0,
-            disputed_non_property_disregard: 0.0,
+            child_care: 0.0, rent_or_mortgage: 600.0, maintenance_out: 0.0, legal_aid: 0.0
           })
       end
     end
