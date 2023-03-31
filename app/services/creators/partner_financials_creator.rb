@@ -136,13 +136,18 @@ module Creators
     def create_dependants
       return if dependant_params.blank?
 
-      creator = DependantsCreator.call(
-        assessment_id: @assessment_id,
-        dependants_params: { dependants: dependant_params },
-        relationship: :partner_dependants,
-      )
+      json_validator = JsonSwaggerValidator.new("dependants", dependants: dependant_params)
+      if json_validator.valid?
+        creator = DependantsCreator.call(
+          assessment_id: @assessment_id,
+          dependants_params: { dependants: dependant_params },
+          relationship: :partner_dependants,
+        )
 
-      errors.concat(creator.errors)
+        errors.concat(creator.errors)
+      else
+        errors.concat(json_validator.errors)
+      end
     end
 
     def partner_attributes

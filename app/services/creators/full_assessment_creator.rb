@@ -36,8 +36,13 @@ module Creators
         },
         lambda { |assessment, params|
           if params[:dependants]
-            Creators::DependantsCreator.call(assessment_id: assessment.id,
-                                             dependants_params: { dependants: params[:dependants] })
+            json_validator = JsonSwaggerValidator.new("dependants", dependants: params[:dependants])
+            if json_validator.valid?
+              Creators::DependantsCreator.call(assessment_id: assessment.id,
+                                               dependants_params: { dependants: params[:dependants] })
+            else
+              CreationResult.new(errors: json_validator.errors).freeze
+            end
           end
         },
         lambda { |assessment, params|

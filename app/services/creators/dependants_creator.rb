@@ -10,11 +10,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        self.errors = json_validator.errors
-      end
+      create_records
       self
     end
 
@@ -34,10 +30,6 @@ module Creators
 
     def dependants_attributes
       @dependants_attributes ||= @dependants_params[:dependants]
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("dependants", @dependants_params)
     end
   end
 end
