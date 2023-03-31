@@ -1159,7 +1159,7 @@ paths:
                   version:
                     type: string
                     enum:
-                    - '5'
+                    - '6'
                   success:
                     type: boolean
       requestBody:
