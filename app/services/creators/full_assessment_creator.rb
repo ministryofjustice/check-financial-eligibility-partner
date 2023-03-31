@@ -26,8 +26,13 @@ module Creators
                                                 proceeding_types_params: { proceeding_types: params[:proceeding_types] })
         },
         lambda { |assessment, params|
-          Creators::ApplicantCreator.call(assessment_id: assessment.id,
-                                          applicant_params: { applicant: params[:applicant] })
+          validator = JsonSwaggerValidator.new("applicant", applicant: params[:applicant])
+          if validator.valid?
+            Creators::ApplicantCreator.call(assessment:,
+                                            applicant_params: { applicant: params[:applicant] })
+          else
+            CreationResult.new(errors: validator.errors).freeze
+          end
         },
         lambda { |assessment, params|
           if params[:dependants]

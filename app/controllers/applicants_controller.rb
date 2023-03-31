@@ -1,9 +1,16 @@
 class ApplicantsController < ApplicationController
+  before_action :load_assessment
+
   def create
-    if creation_service.success?
-      render_success
+    json_validator = JsonSwaggerValidator.new("applicant", applicant_params)
+    if json_validator.valid?
+      if creation_service.success?
+        render_success
+      else
+        render_unprocessable(creation_service.errors)
+      end
     else
-      render_unprocessable(creation_service.errors)
+      render_unprocessable(json_validator.errors)
     end
   end
 
@@ -11,7 +18,7 @@ private
 
   def creation_service
     @creation_service ||= Creators::ApplicantCreator.call(
-      assessment_id: params[:assessment_id],
+      assessment: @assessment,
       applicant_params:,
     )
   end

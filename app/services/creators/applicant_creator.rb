@@ -1,43 +1,40 @@
 module Creators
-  class ApplicantCreator < BaseCreator
-    attr_accessor :assessment_id, :applicant
-
-    def initialize(assessment_id:, applicant_params:)
-      super()
-      @assessment_id = assessment_id
-      @applicant_params = applicant_params
+  class ApplicantCreator
+    class CreationError < Creators::BaseCreator::CreationError
     end
-
-    def call
-      if json_validator.valid?
-        create_records
-      else
-        self.errors = json_validator.errors
+    Result = Struct.new :errors, :applicant, keyword_init: true do
+      def success?
+        errors.empty?
       end
-      self
     end
 
-  private
+    class << self
+      def call(assessment:, applicant_params:)
+        create_records assessment:, applicant_params:
+      end
 
-    def create_records
-      create_applicant
-    rescue CreationError => e
-      self.errors = e.errors
-    end
+    private
 
-    def create_applicant
-      (raise CreationError, ["There is already an applicant for this assesssment"]) if assessment.applicant.present?
-      self.applicant = assessment.create_applicant!(applicant_attributes)
-    rescue ActiveRecord::RecordInvalid => e
-      raise CreationError, e.record.errors.full_messages
-    end
+      def create_records(assessment:, applicant_params:)
+        applicant = create_applicant(assessment:, applicant_params:)
+        Result.new(errors: [], applicant:).freeze
+      rescue CreationError => e
+        Result.new(errors: e.errors).freeze
+      end
 
-    def applicant_attributes
-      @applicant_attributes ||= @applicant_params[:applicant]
-    end
+      def create_applicant(assessment:, applicant_params:)
+        (raise CreationError, ["There is already an applicant for this assesssment"]) if assessment.applicant.present?
+        assessment.create_applicant!(applicant_attributes(applicant_params))
+      rescue ActiveRecord::RecordInvalid => e
+        raise CreationError, e.record.errors.full_messages
+      end
 
-    def json_validator
-      @json_validator ||= JsonValidator.new("applicant_v5", @applicant_params)
+      def applicant_attributes(applicant_params)
+        applicant_params[:applicant]
+      end
     end
+    # def json_validator
+    #   @json_validator ||= JsonValidator.new("applicant_v5", @applicant_params)
+    # end
   end
 end
