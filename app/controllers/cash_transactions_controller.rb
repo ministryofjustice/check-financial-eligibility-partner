@@ -1,9 +1,14 @@
 class CashTransactionsController < ApplicationController
   def create
-    if creation_service.success?
-      render_success
+    json_validator = JsonSwaggerValidator.new("cash_transactions", cash_transaction_params)
+    if json_validator.valid?
+      if creation_service.success?
+        render_success
+      else
+        render_unprocessable(creation_service.errors)
+      end
     else
-      render_unprocessable(creation_service.errors)
+      render_unprocessable(json_validator.errors)
     end
   end
 

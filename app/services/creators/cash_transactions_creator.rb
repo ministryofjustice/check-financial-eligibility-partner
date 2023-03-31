@@ -9,11 +9,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        errors.concat(json_validator.errors)
-      end
+      create_records
       self
     end
 
@@ -80,10 +76,6 @@ module Creators
                               date: Date.parse(payment[:date]),
                               amount: payment[:amount],
                               client_id: payment[:client_id])
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("cash_transaction", @cash_transaction_params)
     end
 
     def income_attributes

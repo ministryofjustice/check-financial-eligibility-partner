@@ -42,8 +42,13 @@ module Creators
         },
         lambda { |assessment, params|
           if params[:cash_transactions]
-            Creators::CashTransactionsCreator.call(assessment_id: assessment.id,
-                                                   cash_transaction_params: params[:cash_transactions])
+            validator = JsonSwaggerValidator.new("cash_transactions", params[:cash_transactions])
+            if validator.valid?
+              Creators::CashTransactionsCreator.call(assessment_id: assessment.id,
+                                                     cash_transaction_params: params[:cash_transactions])
+            else
+              CreationResult.new(errors: validator.errors).freeze
+            end
           end
         },
         lambda { |assessment, params|
