@@ -860,7 +860,7 @@ paths:
                         items:
                           type: string
         required: true
-  "/v2/assessments":
+  "/v6/assessments":
     post:
       summary: create
       tags:
