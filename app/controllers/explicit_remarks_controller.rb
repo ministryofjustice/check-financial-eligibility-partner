@@ -1,10 +1,14 @@
 class ExplicitRemarksController < ApplicationController
   def create
-    creation_service
-    if creation_service.success?
-      render_success
+    json_validator = JsonSwaggerValidator.new("explicit_remarks", explicit_remarks_params)
+    if json_validator.valid?
+      if creation_service.success?
+        render_success
+      else
+        render_unprocessable(creation_service.errors)
+      end
     else
-      render_unprocessable(creation_service.errors)
+      render_unprocessable(json_validator.errors)
     end
   end
 

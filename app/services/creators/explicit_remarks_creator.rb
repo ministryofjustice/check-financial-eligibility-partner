@@ -7,11 +7,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        errors.concat(json_validator.errors)
-      end
+      create_records
       self
     end
 
@@ -51,10 +47,6 @@ module Creators
 
     def explicit_remarks_attributes
       @explicit_remarks_attributes ||= @explicit_remarks_params.fetch(:explicit_remarks, nil)
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("explicit_remarks", @explicit_remarks_params)
     end
   end
 end
