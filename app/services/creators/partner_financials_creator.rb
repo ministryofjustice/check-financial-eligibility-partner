@@ -69,13 +69,19 @@ module Creators
     def create_employments
       return if employment_params.blank?
 
-      employments_params = { employment_income: employment_params }
-      creator = EmploymentsCreator.call(
-        employments_params:,
-        employment_collection: assessment.partner_employments,
-      )
+      employments_income = { employment_income: employment_params }
 
-      errors.concat(creator.errors)
+      json_validator = JsonSwaggerValidator.new("employments", employments_income)
+      if json_validator.valid?
+        creator = EmploymentsCreator.call(
+          employments_params: employments_income,
+          employment_collection: assessment.partner_employments,
+        )
+
+        errors.concat(creator.errors)
+      else
+        errors.concat(json_validator.errors)
+      end
     end
 
     def create_state_benefits

@@ -26,34 +26,19 @@ module Creators
                                                 proceeding_types_params: { proceeding_types: params[:proceeding_types] })
         },
         lambda { |assessment, params|
-          validator = JsonSwaggerValidator.new("applicant", applicant: params[:applicant])
-          if validator.valid?
-            Creators::ApplicantCreator.call(assessment:,
-                                            applicant_params: { applicant: params[:applicant] })
-          else
-            CreationResult.new(errors: validator.errors).freeze
-          end
+          Creators::ApplicantCreator.call(assessment:,
+                                          applicant_params: { applicant: params[:applicant] })
         },
         lambda { |assessment, params|
           if params[:dependants]
-            json_validator = JsonSwaggerValidator.new("dependants", dependants: params[:dependants])
-            if json_validator.valid?
-              Creators::DependantsCreator.call(assessment_id: assessment.id,
-                                               dependants_params: { dependants: params[:dependants] })
-            else
-              CreationResult.new(errors: json_validator.errors).freeze
-            end
+            Creators::DependantsCreator.call(assessment_id: assessment.id,
+                                             dependants_params: { dependants: params[:dependants] })
           end
         },
         lambda { |assessment, params|
           if params[:cash_transactions]
-            validator = JsonSwaggerValidator.new("cash_transactions", params[:cash_transactions])
-            if validator.valid?
-              Creators::CashTransactionsCreator.call(assessment_id: assessment.id,
-                                                     cash_transaction_params: params[:cash_transactions])
-            else
-              CreationResult.new(errors: validator.errors).freeze
-            end
+            Creators::CashTransactionsCreator.call(assessment_id: assessment.id,
+                                                   cash_transaction_params: params[:cash_transactions])
           end
         },
         lambda { |assessment, params|

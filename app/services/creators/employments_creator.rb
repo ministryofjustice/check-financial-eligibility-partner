@@ -7,12 +7,7 @@ module Creators
     end
     class << self
       def call(employments_params:, employment_collection:)
-        json_validator = JsonValidator.new("employment", employments_params)
-        if json_validator.valid?
-          create_records employments_params, employment_collection
-        else
-          Result.new(errors: json_validator.errors).freeze
-        end
+        create_records employments_params, employment_collection
       end
 
   private
