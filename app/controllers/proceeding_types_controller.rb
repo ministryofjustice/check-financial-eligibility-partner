@@ -1,20 +1,14 @@
-class ProceedingTypesController < ApplicationController
+class ProceedingTypesController < CreationController
   def create
-    if creation_service.success?
-      render_success
-    else
-      render_unprocessable(creation_service.errors)
-    end
+    create_object("proceeding_types", proceeding_types_params, lambda {
+      Creators::ProceedingTypesCreator.call(
+        assessment_id: params[:assessment_id],
+        proceeding_types_params:,
+      )
+    })
   end
 
 private
-
-  def creation_service
-    @creation_service ||= Creators::ProceedingTypesCreator.call(
-      assessment_id: params[:assessment_id],
-      proceeding_types_params:,
-    )
-  end
 
   def proceeding_types_params
     JSON.parse(request.raw_post, symbolize_names: true)

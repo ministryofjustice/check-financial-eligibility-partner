@@ -22,8 +22,13 @@ module Creators
 
       CREATE_FUNCTIONS = [
         lambda { |assessment, params|
-          Creators::ProceedingTypesCreator.call(assessment_id: assessment.id,
-                                                proceeding_types_params: { proceeding_types: params[:proceeding_types] })
+          validator = JsonSwaggerValidator.new("proceeding_types", proceeding_types: params[:proceeding_types])
+          if validator.valid?
+            Creators::ProceedingTypesCreator.call(assessment_id: assessment.id,
+                                                  proceeding_types_params: { proceeding_types: params[:proceeding_types] })
+          else
+            CreationResult.new(errors: validator.errors).freeze
+          end
         },
         lambda { |assessment, params|
           validator = JsonSwaggerValidator.new("applicant", applicant: params[:applicant])
