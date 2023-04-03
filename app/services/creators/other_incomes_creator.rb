@@ -1,7 +1,5 @@
 module Creators
   class OtherIncomesCreator < BaseCreator
-    attr_accessor :assessment_id, :employments_attributes
-
     delegate :gross_income_summary, to: :assessment
 
     attr_reader :other_income_sources
@@ -14,11 +12,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        errors.concat(json_validator.errors)
-      end
+      create_records
       self
     end
 
@@ -59,10 +53,6 @@ module Creators
 
     def other_incomes
       @other_incomes ||= @other_incomes_params.fetch(:other_incomes, nil)
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("other_incomes", @other_incomes_params)
     end
   end
 end

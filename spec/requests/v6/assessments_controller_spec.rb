@@ -235,7 +235,7 @@ module V6
 
         it "returns error JSON" do
           expect(parsed_response[:errors])
-            .to include(/The property '#\/cash_transactions\/income' of type object did not match the following type: array in schema/)
+            .to include(/The property '#\/income' of type object did not match the following type: array in schema/)
         end
       end
 
