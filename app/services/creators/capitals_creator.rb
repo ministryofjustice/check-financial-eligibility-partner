@@ -1,11 +1,14 @@
 module Creators
   class CapitalsCreator
+    Result = Data.define(:success?)
+
     class << self
       def call(capital_params:, capital_summary:)
         ActiveRecord::Base.transaction do
           create_liquid_assets capital_summary, capital_params[:bank_accounts]
           create_non_liquid_assets capital_summary, capital_params[:non_liquid_capital]
         end
+        Result.new(success?: true)
       end
 
     private
