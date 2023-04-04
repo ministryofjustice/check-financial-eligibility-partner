@@ -10,12 +10,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        errors.concat(json_validator.errors)
-      end
-
+      create_records
       self
     end
 
@@ -45,10 +40,6 @@ module Creators
 
     def regular_transactions
       @regular_transactions ||= @regular_transaction_params.fetch(:regular_transactions)
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("regular_transactions", @regular_transaction_params)
     end
 
     def gross_income_summary

@@ -57,13 +57,18 @@ module Creators
     def create_regular_transactions
       return if regular_transaction_params.blank?
 
-      creator = RegularTransactionsCreator.call(
-        assessment_id: @assessment_id,
-        regular_transaction_params: { regular_transactions: regular_transaction_params },
-        gross_income_summary: assessment.partner_gross_income_summary,
-      )
+      json_validator = JsonSwaggerValidator.new("regular_transactions", { regular_transactions: regular_transaction_params })
+      if json_validator.valid?
+        creator = RegularTransactionsCreator.call(
+          assessment_id: @assessment_id,
+          regular_transaction_params: { regular_transactions: regular_transaction_params },
+          gross_income_summary: assessment.partner_gross_income_summary,
+        )
 
-      errors.concat(creator.errors)
+        errors.concat(creator.errors)
+      else
+        errors.concat(json_validator.errors)
+      end
     end
 
     def create_employments
