@@ -15,9 +15,5 @@ module Creators
         new_property(attrs, false)
       end
     end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("additional_properties", @properties_params)
-    end
   end
 end

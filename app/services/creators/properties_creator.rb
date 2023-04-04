@@ -12,11 +12,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        self.errors = json_validator.errors
-      end
+      create_records
       self
     end
 
@@ -58,10 +54,6 @@ module Creators
 
     def properties_attributes
       @properties_attributes ||= @properties_params[:properties]
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("properties", @properties_params)
     end
   end
 end

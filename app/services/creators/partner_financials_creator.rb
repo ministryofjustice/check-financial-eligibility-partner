@@ -99,12 +99,17 @@ module Creators
     def create_additional_properties
       return if additional_property_params.blank?
 
-      creator = PartnerPropertiesCreator.call(
-        assessment_id: @assessment_id,
-        properties_params: additional_property_params,
-      )
+      validator = JsonValidator.new("additional_properties", additional_property_params)
 
-      errors.concat(creator.errors)
+      if validator.valid?
+        creator = PartnerPropertiesCreator.call(
+          assessment_id: @assessment_id,
+          properties_params: additional_property_params,
+        )
+        errors.concat(creator.errors)
+      else
+        errors.concat(validator.errors)
+      end
     end
 
     def create_capitals
