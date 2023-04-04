@@ -87,7 +87,7 @@ module Creators
         },
         lambda { |assessment, params|
           if params[:vehicles]
-            Creators::VehicleCreator.call(assessment_id: assessment.id,
+            Creators::VehicleCreator.call(capital_summary: assessment.capital_summary,
                                           vehicles_params: { vehicles: params[:vehicles] })
           end
         },

@@ -129,13 +129,17 @@ module Creators
     def create_vehicles
       return if vehicle_params.blank?
 
-      creator = VehicleCreator.call(
-        assessment_id: @assessment_id,
-        vehicles_params: { vehicles: vehicle_params },
-        capital_summary: assessment.partner_capital_summary,
-      )
+      json_validator = JsonSwaggerValidator.new("vehicles", { vehicles: vehicle_params })
+      if json_validator.valid?
+        creator = VehicleCreator.call(
+          vehicles_params: { vehicles: vehicle_params },
+          capital_summary: assessment.partner_capital_summary,
+        )
 
-      errors.concat(creator.errors)
+        errors.concat(creator.errors)
+      else
+        errors.concat(json_validator.errors)
+      end
     end
 
     def create_outgoings
