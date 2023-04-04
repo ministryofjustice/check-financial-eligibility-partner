@@ -13,7 +13,6 @@ module Creators
     end
 
     def initialize(remote_ip:, assessment_params:, version:)
-      super()
       @assessment_params = assessment_params
       @remote_ip = remote_ip
       @version = version

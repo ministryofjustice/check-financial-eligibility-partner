@@ -1,4 +1,6 @@
-class AssessmentsController < ApplicationController
+class AssessmentsController < CreationController
+  before_action :validate, only: [:create]
+
   def create
     json_validator ||= JsonValidator.new("assessment", assessment_params)
     if json_validator.valid?
@@ -24,6 +26,10 @@ class AssessmentsController < ApplicationController
   end
 
 private
+
+  def validate
+    validate_schema "/assessments", assessment_params
+  end
 
   def assessment_incomplete?
     assessment.proceeding_types.empty? || assessment.applicant.nil?
