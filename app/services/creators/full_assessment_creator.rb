@@ -22,7 +22,7 @@ module Creators
 
       CREATE_FUNCTIONS = [
         lambda { |assessment, params|
-          validator = JsonSwaggerValidator.new("proceeding_types", proceeding_types: params[:proceeding_types])
+          validator = JsonSwaggerValidator.new "proceeding_types", { proceeding_types: params[:proceeding_types] }
           if validator.valid?
             Creators::ProceedingTypesCreator.call(assessment_id: assessment.id,
                                                   proceeding_types_params: { proceeding_types: params[:proceeding_types] })
@@ -31,7 +31,7 @@ module Creators
           end
         },
         lambda { |assessment, params|
-          validator = JsonSwaggerValidator.new("applicant", applicant: params[:applicant])
+          validator = JsonSwaggerValidator.new "applicant", { applicant: params[:applicant] }
           if validator.valid?
             Creators::ApplicantCreator.call(assessment:,
                                             applicant_params: { applicant: params[:applicant] })
@@ -41,7 +41,7 @@ module Creators
         },
         lambda { |assessment, params|
           if params[:dependants]
-            validator = JsonSwaggerValidator.new("dependants", dependants: params[:dependants])
+            validator = JsonSwaggerValidator.new "dependants", { dependants: params[:dependants] }
             if validator.valid?
               Creators::DependantsCreator.call(assessment_id: assessment.id,
                                                dependants_params: { dependants: params[:dependants] })
@@ -52,7 +52,7 @@ module Creators
         },
         lambda { |assessment, params|
           if params[:cash_transactions]
-            validator = JsonSwaggerValidator.new("cash_transactions", params[:cash_transactions])
+            validator = JsonSwaggerValidator.new "cash_transactions", params[:cash_transactions]
             if validator.valid?
               Creators::CashTransactionsCreator.call(assessment_id: assessment.id,
                                                      cash_transaction_params: params[:cash_transactions])
