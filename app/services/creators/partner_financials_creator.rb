@@ -92,13 +92,19 @@ module Creators
     def create_state_benefits
       return if state_benefit_params.blank?
 
-      creator = StateBenefitsCreator.call(
-        assessment_id: @assessment_id,
-        state_benefits_params: { state_benefits: state_benefit_params },
-        gross_income_summary: assessment.partner_gross_income_summary,
-      )
+      json_validator = JsonSwaggerValidator.new("state_benefits", { state_benefits: state_benefit_params })
 
-      errors.concat(creator.errors)
+      if json_validator.valid?
+        creator = StateBenefitsCreator.call(
+          assessment_id: @assessment_id,
+          state_benefits_params: { state_benefits: state_benefit_params },
+          gross_income_summary: assessment.partner_gross_income_summary,
+        )
+
+        errors.concat(creator.errors)
+      else
+        errors.concat(json_validator.errors)
+      end
     end
 
     def create_additional_properties

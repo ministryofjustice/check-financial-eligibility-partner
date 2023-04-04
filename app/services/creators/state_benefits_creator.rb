@@ -13,11 +13,7 @@ module Creators
     end
 
     def call
-      if json_validator.valid?
-        create_records
-      else
-        errors.concat(json_validator.errors)
-      end
+      create_records
       self
     end
 
@@ -61,10 +57,6 @@ module Creators
 
     def state_benefits
       @state_benefits ||= @state_benefits_params[:state_benefits]
-    end
-
-    def json_validator
-      @json_validator ||= JsonValidator.new("state_benefits", @state_benefits_params)
     end
 
     def gross_income_summary
