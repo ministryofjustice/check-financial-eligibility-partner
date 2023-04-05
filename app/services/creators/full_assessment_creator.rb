@@ -75,7 +75,7 @@ module Creators
         },
         lambda { |assessment, params|
           if params[:other_incomes]
-            Creators::OtherIncomesCreator.call(assessment_id: assessment.id,
+            Creators::OtherIncomesCreator.call(assessment:,
                                                other_incomes_params: { other_incomes: params[:other_incomes] })
           end
         },

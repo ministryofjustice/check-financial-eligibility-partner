@@ -33,8 +33,5 @@ module Creators
         applicant_params[:applicant]
       end
     end
-    # def json_validator
-    #   @json_validator ||= JsonValidator.new("applicant_v5", @applicant_params)
-    # end
   end
 end
