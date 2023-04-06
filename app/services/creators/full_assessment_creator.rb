@@ -75,8 +75,6 @@ module Creators
           if params[:capitals]
             Creators::CapitalsCreator.call(capital_params: params[:capitals],
                                            capital_summary: assessment.capital_summary)
-            # CapitalsCreator no longer returns errors - it throws exceptions
-            CreationResult.new(errors: [])
           end
         },
         lambda { |assessment, params|

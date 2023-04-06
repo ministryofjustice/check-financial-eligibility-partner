@@ -6,8 +6,12 @@ module V6
       create = Creators::FullAssessmentCreator.call(remote_ip: request.remote_ip,
                                                     params: full_assessment_params)
 
-      calculation_output = Workflows::MainWorkflow.call(create.assessment)
-      render json: Decorators::V5::AssessmentDecorator.new(create.assessment, calculation_output).as_json
+      if create.success?
+        calculation_output = Workflows::MainWorkflow.call(create.assessment)
+        render json: Decorators::V5::AssessmentDecorator.new(create.assessment, calculation_output).as_json
+      else
+        render_unprocessable(create.errors)
+      end
     end
 
   private
