@@ -57,8 +57,6 @@ module Creators
     def create_regular_transactions
       return if regular_transaction_params.blank?
 
-      # json_validator = JsonSwaggerValidator.new("regular_transactions", { regular_transactions: regular_transaction_params })
-      # if json_validator.valid?
       creator = RegularTransactionsCreator.call(
         assessment_id: @assessment_id,
         regular_transaction_params: { regular_transactions: regular_transaction_params },
@@ -66,9 +64,6 @@ module Creators
       )
 
       errors.concat(creator.errors)
-      # else
-      #   errors.concat(json_validator.errors)
-      # end
     end
 
     def create_employments
@@ -76,51 +71,34 @@ module Creators
 
       employments_income = { employment_income: employment_params }
 
-      json_validator = JsonSwaggerValidator.new("employments", employments_income)
-      if json_validator.valid?
-        creator = EmploymentsCreator.call(
-          employments_params: employments_income,
-          employment_collection: assessment.partner_employments,
-        )
+      creator = EmploymentsCreator.call(
+        employments_params: employments_income,
+        employment_collection: assessment.partner_employments,
+      )
 
-        errors.concat(creator.errors)
-      else
-        errors.concat(json_validator.errors)
-      end
+      errors.concat(creator.errors)
     end
 
     def create_state_benefits
       return if state_benefit_params.blank?
 
-      json_validator = JsonSwaggerValidator.new("state_benefits", { state_benefits: state_benefit_params })
+      creator = StateBenefitsCreator.call(
+        assessment_id: @assessment_id,
+        state_benefits_params: { state_benefits: state_benefit_params },
+        gross_income_summary: assessment.partner_gross_income_summary,
+      )
 
-      if json_validator.valid?
-        creator = StateBenefitsCreator.call(
-          assessment_id: @assessment_id,
-          state_benefits_params: { state_benefits: state_benefit_params },
-          gross_income_summary: assessment.partner_gross_income_summary,
-        )
-
-        errors.concat(creator.errors)
-      else
-        errors.concat(json_validator.errors)
-      end
+      errors.concat(creator.errors)
     end
 
     def create_additional_properties
       return if additional_property_params.blank?
 
-      validator = JsonValidator.new("additional_properties", additional_property_params)
-
-      if validator.valid?
-        creator = PartnerPropertiesCreator.call(
-          assessment_id: @assessment_id,
-          properties_params: additional_property_params,
-        )
-        errors.concat(creator.errors)
-      else
-        errors.concat(validator.errors)
-      end
+      creator = PartnerPropertiesCreator.call(
+        assessment_id: @assessment_id,
+        properties_params: additional_property_params,
+      )
+      errors.concat(creator.errors)
     end
 
     def create_capitals
@@ -135,17 +113,12 @@ module Creators
     def create_vehicles
       return if vehicle_params.blank?
 
-      json_validator = JsonSwaggerValidator.new("vehicles", { vehicles: vehicle_params })
-      if json_validator.valid?
-        creator = VehicleCreator.call(
-          vehicles_params: { vehicles: vehicle_params },
-          capital_summary: assessment.partner_capital_summary,
-        )
+      creator = VehicleCreator.call(
+        vehicles_params: { vehicles: vehicle_params },
+        capital_summary: assessment.partner_capital_summary,
+      )
 
-        errors.concat(creator.errors)
-      else
-        errors.concat(json_validator.errors)
-      end
+      errors.concat(creator.errors)
     end
 
     def create_outgoings
@@ -162,18 +135,13 @@ module Creators
     def create_dependants
       return if dependant_params.blank?
 
-      json_validator = JsonSwaggerValidator.new("dependants", dependants: dependant_params)
-      if json_validator.valid?
-        creator = DependantsCreator.call(
-          assessment_id: @assessment_id,
-          dependants_params: { dependants: dependant_params },
-          relationship: :partner_dependants,
-        )
+      creator = DependantsCreator.call(
+        assessment_id: @assessment_id,
+        dependants_params: { dependants: dependant_params },
+        relationship: :partner_dependants,
+      )
 
-        errors.concat(creator.errors)
-      else
-        errors.concat(json_validator.errors)
-      end
+      errors.concat(creator.errors)
     end
 
     def partner_attributes
