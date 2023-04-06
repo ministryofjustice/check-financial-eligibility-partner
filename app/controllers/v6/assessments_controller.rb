@@ -1,23 +1,20 @@
 module V6
-  class AssessmentsController < ApplicationController
-    def create
-      json_validator = JsonSwaggerValidator.new("/v6/assessments", full_assessment_params)
-      if json_validator.valid?
-        create = Creators::FullAssessmentCreator.call(remote_ip: request.remote_ip,
-                                                      params: full_assessment_params)
+  class AssessmentsController < CreationController
+    before_action :validate, only: [:create]
 
-        if create.success?
-          calculation_output = Workflows::MainWorkflow.call(create.assessment)
-          render json: Decorators::V5::AssessmentDecorator.new(create.assessment, calculation_output).as_json
-        else
-          render_unprocessable(create.errors)
-        end
-      else
-        render_unprocessable(json_validator.errors)
-      end
+    def create
+      create = Creators::FullAssessmentCreator.call(remote_ip: request.remote_ip,
+                                                    params: full_assessment_params)
+
+      calculation_output = Workflows::MainWorkflow.call(create.assessment)
+      render json: Decorators::V5::AssessmentDecorator.new(create.assessment, calculation_output).as_json
     end
 
   private
+
+    def validate
+      validate_schema "/v6/assessments", full_assessment_params
+    end
 
     def full_assessment_params
       JSON.parse(request.raw_post, symbolize_names: true)
