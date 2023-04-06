@@ -5,14 +5,9 @@ module Creators
         errors.empty?
       end
     end
+
     class << self
       def call(employments_params:, employment_collection:)
-        create_records employments_params, employment_collection
-      end
-
-  private
-
-      def create_records(employments_params, employment_collection)
         ActiveRecord::Base.transaction do
           create_employment employments_params, employment_collection
           Result.new(errors: []).freeze
@@ -20,6 +15,8 @@ module Creators
           Result.new(errors: [e.message]).freeze
         end
       end
+
+  private
 
       def create_employment(employments_params, employment_collection)
         employments_params[:employment_income].each do |attributes|
