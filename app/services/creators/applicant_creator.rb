@@ -2,6 +2,7 @@ module Creators
   class ApplicantCreator
     class CreationError < Creators::BaseCreator::CreationError
     end
+
     Result = Struct.new :errors, :applicant, keyword_init: true do
       def success?
         errors.empty?
@@ -10,17 +11,13 @@ module Creators
 
     class << self
       def call(assessment:, applicant_params:)
-        create_records assessment:, applicant_params:
-      end
-
-    private
-
-      def create_records(assessment:, applicant_params:)
         applicant = create_applicant(assessment:, applicant_params:)
         Result.new(errors: [], applicant:).freeze
       rescue CreationError => e
         Result.new(errors: e.errors).freeze
       end
+
+    private
 
       def create_applicant(assessment:, applicant_params:)
         (raise CreationError, ["There is already an applicant for this assesssment"]) if assessment.applicant.present?
