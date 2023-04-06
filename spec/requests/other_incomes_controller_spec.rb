@@ -76,7 +76,7 @@ RSpec.describe OtherIncomesController, type: :request do
 
         it "contains success false in the response body" do
           post_payload
-          expect(parsed_response).to match(errors: [/The property '#\/other_incomes\/1' did not contain a required property of 'source' in schema file/], success: false)
+          expect(parsed_response).to match(errors: [/The property '#\/other_incomes\/1' did not contain a required property of 'source' in schema/], success: false)
         end
 
         it "does not create any other income source records" do
@@ -102,7 +102,7 @@ RSpec.describe OtherIncomesController, type: :request do
 
         it "contains success false in the response body" do
           post_payload
-          expect(parsed_response).to match(errors: [/The property '#\/other_incomes\/1\/payments\/0' did not contain a required property of 'client_id' in schema file/], success: false)
+          expect(parsed_response).to match(errors: [/The property '#\/other_incomes\/1\/payments\/0' did not contain a required property of 'client_id' in schema/], success: false)
         end
 
         it "does not create any other income source records" do
@@ -153,7 +153,6 @@ RSpec.describe OtherIncomesController, type: :request do
     end
 
     context "with missing payment date" do
-      let(:assessment_id) { SecureRandom.uuid }
       let(:other_income_params) do
         {
           other_incomes: [
@@ -182,7 +181,6 @@ RSpec.describe OtherIncomesController, type: :request do
     end
 
     context "with invalid client_id" do
-      let(:assessment_id) { SecureRandom.uuid }
       let(:other_income_params) do
         {
           other_incomes: [
