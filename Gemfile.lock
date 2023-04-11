@@ -192,6 +192,7 @@ GEM
     faraday-retry (1.0.3)
     ffi (1.15.5)
     formatador (1.1.0)
+    fuzzbert (1.0.4)
     globalid (1.1.0)
       activesupport (>= 5.0)
     google-apis-core (0.11.0)
@@ -516,6 +517,7 @@ DEPENDENCIES
   factory_bot_rails (>= 6.2.0)
   faker
   faraday (~> 1.10)
+  fuzzbert
   google_drive (>= 3.0.7)
   govuk_notify_rails (~> 2.2.0)
   guard
