@@ -7,6 +7,8 @@ module TestCase
     DATA_DIR = Rails.root.join("tmp/integration_test_data")
     MASTER_SHEET = "AAA - CFE Integration Test master spreadsheet".freeze
 
+    require "roo"
+
     def initialize(verbosity_level, refresh)
       @verbosity_level = verbosity_level
       @spreadsheet_names = parse_master_sheet

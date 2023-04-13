@@ -159,6 +159,10 @@ jobs:
           path: /tmp/test-results/rspec
       - store_artifacts:
           path: ./coverage
+      - run:
+          name: Experimental Run of Mutant
+          command: |
+            bundle exec mutant run -j1 --include app/services/workflows --require non_passported_workflow --use rspec 'Workflows*'
 
   integration_tests:
     executor: test-executor

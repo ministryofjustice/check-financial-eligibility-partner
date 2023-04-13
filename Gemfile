@@ -51,9 +51,6 @@ gem "google_drive", ">= 3.0.7"
 # Improve backtrace in nested error recues
 gem "nesty"
 
-# parse spreadsheets
-gem "roo", "~> 2.10.0"
-
 # Required following upgrade to ruby 3.1.0
 gem "net-imap"
 gem "net-pop"
@@ -73,7 +70,15 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "hashdiff"
+  source 'https://oss:Q7U7p2q2XlpY45kwqjCpXLIPf122rjkR@gem.mutant.dev' do
+    gem 'mutant-license'
+  end
+  gem "mutant-rspec"
   gem "pry-byebug"
+
+  # parse spreadsheets
+  gem "roo", require: false
+
   gem "rspec_junit_formatter"
   gem "rspec-rails", "~> 6.0", ">= 6.0.1"
   gem "rswag-specs"
