@@ -14,6 +14,7 @@ RSpec.describe "full_assessment", :calls_bank_holiday, type: :request, swagger_d
                 required: true,
                 schema: {
                   type: :object,
+                  additionalProperties: false,
                   required: %i[assessment applicant proceeding_types],
                   properties: {
                     assessment: { "$ref" => "#/components/schemas/Assessment" },
