@@ -301,10 +301,6 @@ workflows:
             branches:
               ignore: main
       #          <<: *generic-slack-fail-post-step
-      - unit_tests:
-          filters:
-            branches:
-              ignore: main
       -  run_mutant:
           filters:
             branches:
