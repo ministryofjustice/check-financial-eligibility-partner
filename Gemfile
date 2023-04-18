@@ -70,8 +70,8 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "hashdiff"
-  source 'https://oss:Q7U7p2q2XlpY45kwqjCpXLIPf122rjkR@gem.mutant.dev' do
-    gem 'mutant-license'
+  source "https://oss:Q7U7p2q2XlpY45kwqjCpXLIPf122rjkR@gem.mutant.dev" do
+    gem "mutant-license"
   end
   gem "mutant-rspec"
   gem "pry-byebug"
