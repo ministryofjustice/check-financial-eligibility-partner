@@ -159,6 +159,16 @@ jobs:
           path: /tmp/test-results/rspec
       - store_artifacts:
           path: ./coverage
+
+  run_mutant:
+    executor: test-executor
+    steps:
+      - checkout
+      - *install_packages_for_testing
+      - *restore_gems_cache
+      - *install_gems
+      - *save_gems_cache
+      - *setup_database
       - run:
           name: Experimental Run of Mutant
           command: |
@@ -295,6 +305,10 @@ workflows:
           filters:
             branches:
               ignore: main
+      -  run_mutant:
+          filters:
+            branches:
+              ignore: main
       #          <<: *generic-slack-fail-post-step
       - integration_tests:
           filters:
@@ -316,7 +330,7 @@ workflows:
           requires:
             - lint_checks
             - check_swagger
-            - unit_tests
+            - run_mutant
             - build_and_push
       - delete_dependabot_deployment:
           context: check-financial-eligibility-partner-uat
