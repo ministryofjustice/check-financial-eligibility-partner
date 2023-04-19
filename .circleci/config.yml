@@ -174,7 +174,7 @@ jobs:
           environment:
             NOCOVERAGE: 1
           command: |
-            bundle exec mutant run -j1 --include app/services/calculators --require childcare_eligibility_calculator --use rspec 'Calculators*'
+            bundle exec mutant run -j2 --include app/services/calculators --require childcare_eligibility_calculator --use rspec 'Calculators*'
   integration_tests:
     executor: test-executor
     steps:
