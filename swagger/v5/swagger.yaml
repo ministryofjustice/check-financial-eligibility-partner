@@ -1399,6 +1399,7 @@ paths:
                               and partner
                       partner_capital:
                         type: object
+                        additionalProperties: false
                         properties:
                           total_liquid:
                             type: number
@@ -1415,8 +1416,6 @@ paths:
                           pensioner_capital_disregard:
                             type: number
                           subject_matter_of_dispute_disregard:
-                            type: number
-                          capital_contribution:
                             type: number
                           assessed_capital:
                             type: number
