@@ -1,8 +1,14 @@
 [![CircleCI](https://circleci.com/gh/ministryofjustice/check-financial-eligibility.svg?style=shield)](https://circleci.com/gh/ministryofjustice/check-financial-eligibility/tree/main)
 
-# Ministry of Justice
+# DEPRECATION
 
-## This is a fork of Check Financial Eligibility API
+**NOTICE**
+
+**20/4/23 This repo is deprecated, in favour of: [CFE-Civil](https://github.com/ministryofjustice/cfe-civil)**
+
+---
+
+## CFE-Partner - a fork of Check Financial Eligibility API
 
 The fork is to allow the Estimate Eligibility team to add partner functionality without impacting other users of the API. The intention is to merge this fork back into the main service at a later date.
 
