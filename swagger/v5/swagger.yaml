@@ -1491,6 +1491,7 @@ paths:
           application/json:
             schema:
               type: object
+              additionalProperties: false
               required:
               - assessment
               - applicant
