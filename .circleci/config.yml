@@ -310,9 +310,6 @@ workflows:
       - deploy_uat:
           context: check-financial-eligibility-partner-uat
           requires:
-            - lint_checks
-            - check_swagger
-            - unit_tests
             - build_and_push
       - delete_dependabot_deployment:
           context: check-financial-eligibility-partner-uat
